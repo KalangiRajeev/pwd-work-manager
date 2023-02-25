@@ -1,4 +1,5 @@
 
+@import './scss/_variables.scss';
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
 html,
@@ -8,6 +9,6 @@ body {
 
 body {
     margin: 0;
-    font-family: "Open Sans";
+    font-family: "Open Sans", sans-serif;
     font-style: normal;
 }

@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "pwd-work-manager": {
+      "hosting": {
+        "pwd-work-manager": [
+          "pwd-work-manager"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "pwd-work-manager"
+  }
+}

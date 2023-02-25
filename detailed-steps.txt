@@ -9,4 +9,4 @@ npm install firebase
 npm install -g firebase-tools
 firebase login
 ng add @angular/fire 
-
+ng add @angular/material
