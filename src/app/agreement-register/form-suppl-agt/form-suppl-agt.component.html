@@ -1,0 +1,59 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button icon="chevron-back" defaultHref="/main/agreement-register"></ion-back-button>
+    </ion-buttons>
+    <ion-title> {{this.isEditMode ? 'Edit' : 'Add'}} Suppl Agt Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{this.isEditMode ? 'Edit' : 'Add'}} Suppl Agt Details</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div [formGroup]="saFormGroup" class="form-add-measurements">
+
+    <ion-input formControlName="technicalApprovalReference" class="input-fields"
+      label="Technical Approval Reference" label-placement="floating" fill="outline"
+      placeholder="Enter text"></ion-input>
+
+    <ion-input formControlName="supplAgtNumber" class="input-fields" label="Suppl Agt Number"
+      label-placement="floating" fill="outline" placeholder="Enter text"></ion-input>
+
+    <mat-form-field class="date">
+      <mat-label>Date of Agreement</mat-label>
+      <input matInput [matDatepicker]="picker2" [formControl]="dateOfAgreement">
+      <mat-hint>DD/MM/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+
+    <ion-input formControlName="supplAgtAmount" class="input-fields" label="Suppl Items ECV Amount"
+        type="number" label-placement="floating" fill="outline" placeholder="Enter text"></ion-input>
+    
+    <mat-form-field>
+      <mat-label>Agt. concluded at Office</mat-label>
+      <input matInput type="text" placeholder="Pick one" aria-label="office" [formControl]="officeFC"
+        [matAutocomplete]="autoOffice">
+      <mat-autocomplete #autoOffice="matAutocomplete" [displayWith]="displayFn">
+        <mat-option *ngFor="let option of focalOffices$ | async" [value]="option">{{option.name}}</mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+  </div>
+
+  <div class="ion-buttons">
+    <ion-buttons slot="secondary">
+      <ion-button fill="outline"
+        [routerLink]="agtRegId ? '/main/agreement-register/details/'+ agtRegId: '/main/agreement-register'"
+        routerDirection="back"> Cancel </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="primary">
+      <ion-button fill="solid" type="submit" (click)="saveSupplAgtDetails()"> Save Details </ion-button>
+    </ion-buttons>
+  </div>
+
+</ion-content>

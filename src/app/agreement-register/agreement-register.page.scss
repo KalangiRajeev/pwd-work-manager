@@ -1,0 +1,36 @@
+// .ion-fab {
+//     margin-right: 2rem;
+//     margin-bottom: 2rem;
+// }
+
+.ion-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 2rem 0 0 0;
+}
+
+.text {
+  overflow: hidden;
+  width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+.container[scrollx=true] {
+    width: 100px;
+    background-color: green;
+    overflow: auto; 
+    white-space: nowrap;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    .scroll {
+      overflow: auto;
+    }
+  }

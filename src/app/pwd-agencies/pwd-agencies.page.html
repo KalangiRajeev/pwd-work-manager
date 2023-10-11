@@ -1,0 +1,52 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Agencies</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <div [formGroup]="searchFormGroup">
+      <ion-searchbar [debounce]="500" formControlName="searchFormControl"></ion-searchbar>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Agencies</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-fab class="ion-fab" slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button routerLink="/main/pwd-agencies/create">
+      <ion-icon name="create-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-list>
+    <ion-item-sliding *ngFor="let agency of filteredAgencies">
+      <ion-item-options side="end">
+        <ion-item-option color="danger">
+          <ion-icon slot="icon-only" name="trash" button></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+
+      <ion-item-options side="start">
+        <ion-item-option color="success">
+          <ion-icon slot="icon-only" name="create" button [routerLink]="['/main/pwd-agencies/edit',agency.id]"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+
+      <ion-item button detail="true" detail-icon="caret-forward"
+        [routerLink]="['/main/agreement-register/agency', agency.id]">
+        <ion-label>
+          <b>{{agency.name}} </b>
+          <p ngClass="text">{{agency.address}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+
+</ion-content>

@@ -3,19 +3,31 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>{{ folder }}</ion-title>
+    <ion-title>{{associatedOffice ? associatedOffice.name : 'Home'}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">{{ folder }}</ion-title>
+      <ion-title size="large">{{associatedOffice ? associatedOffice.name : 'Home'}}</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong class="capitalize">{{ folder }}</strong>
-    <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+
+  <ion-list>
+    <ion-item button detail="true" detail-icon="caret-forward"
+      [routerLink]=" associatedOffice && associatedOffice.subOffices && associatedOffice.subOffices.length > 0 ? ['/main/pwd-offices/office', associatedOffice.id] : ['/main/agreement-register/office', associatedOffice?.id]">
+      <ion-thumbnail slot="start">
+        <img [src]="loggedInUser?.photoUrl" [alt]="loggedInUser?.name">
+      </ion-thumbnail>
+      <ion-label class="ion-text-wrap">
+        <b>{{associatedOffice?.name}}<br>{{loggedInUser?.name}}</b>
+        <p>{{associatedOffice?.address}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+
+
 </ion-content>

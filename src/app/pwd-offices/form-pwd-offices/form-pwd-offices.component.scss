@@ -1,0 +1,25 @@
+.form-pwd-offices {
+    margin: 1rem;
+    .input-fields {
+        margin: 1rem 0;
+    }
+
+    .ion-buttons{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 2rem 0 0 0;
+    }
+
+    .ion-date{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        margin: 2rem 0 0 0;
+    }
+
+    mat-form-field {
+        width: 100%;
+        margin-top: 1rem;
+    }
+}

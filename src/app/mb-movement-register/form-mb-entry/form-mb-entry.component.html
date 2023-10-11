@@ -1,0 +1,69 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button icon="chevron-back" defaultHref="/main/mb-movement-register"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Enter MB Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Enter MB Details</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+
+  <div class="form-pwd-offices">
+    <form [formGroup]="mbFormGroup">
+      <ion-input formControlName="mbNumber" formclass="input-fields" label="MB Number" label-placement="floating"
+        fill="outline" placeholder="Enter text"></ion-input>
+
+      <div class="ion-date">
+        <ion-label>Issued Date</ion-label>
+        <ion-datetime-button class="input-fields" datetime="iDate"></ion-datetime-button>
+        <ion-modal [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime id="iDate" locale="en-IN" presentation="date" showDefaultButtons="true"
+              formControlName="mbIssuedDate"></ion-datetime>
+          </ng-template>
+        </ion-modal>
+      </div>
+
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Issued to Office</mat-label>
+        <input matInput type="text" 
+          placeholder="Pick one" 
+          aria-label="mb" 
+          [formControl]="issuedToOfficeFC"
+          [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"> 
+          <mat-option *ngFor="let option of nonFocalOffices$ | async" [value]="option">{{option.name}}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+
+      <ion-segment formControlName="mbStatus" value="Less">
+        <ion-segment-button value="Open">
+          <ion-label>Open</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="Closed">
+          <ion-label>Closed</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+    </form>
+
+    <div class="ion-buttons">
+      <ion-buttons slot="secondary">
+        <ion-button fill="outline" routerLink="/main/mb-movement-register" routerDirection="back"> Cancel </ion-button>
+      </ion-buttons>
+      <ion-buttons slot="primary">
+        <ion-button fill="solid" type="submit" (click)="saveMB()"> Save Details </ion-button>
+      </ion-buttons>
+    </div>
+  </div>
+
+</ion-content>

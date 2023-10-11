@@ -1,15 +1,83 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { LoginComponent } from './login/login.component';
+import { UsersListComponent } from './users-list/users-list.component';
+import { UserOfficeComponent } from './users-list/user-office/user-office.component';
+import { AuthGuardUserService } from './services/auth-guard-service/auth-guard-user.service';
+import { MainComponent } from './main/main.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'folder/Inbox',
-    pathMatch: 'full'
+    redirectTo: 'login',
+    pathMatch: 'full',
   },
   {
-    path: 'folder/:id',
-    loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
+    path: 'login',
+    component: LoginComponent,
+  },
+  {
+    path: 'main',
+    component: MainComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'folder',
+        pathMatch: 'full',
+      },
+      {
+        path: 'folder',
+        loadChildren: () => import('./folder/folder.module').then(m => m.FolderPageModule),
+      },
+      {
+        path: 'folder/:uid',
+        loadChildren: () => import('./folder/folder.module').then(m => m.FolderPageModule),
+      },
+      {
+        path: 'agreement-register',
+        loadChildren: () => import('./agreement-register/agreement-register.module').then(m => m.AgreementRegisterPageModule),
+      },
+      {
+        path: 'agreement-register/office/:officeId',
+        loadChildren: () => import('./agreement-register/agreement-register.module').then(m => m.AgreementRegisterPageModule),
+      },
+      {
+        path: 'agreement-register/agency/:agencyId',
+        loadChildren: () => import('./agreement-register/agreement-register.module').then(m => m.AgreementRegisterPageModule),
+      },
+      {
+        path: 'bill-register',
+        loadChildren: () => import('./bill-register/bill-register.module').then(m => m.BillRegisterPageModule),
+      },
+      {
+        path: 'mb-movement-register',
+        loadChildren: () => import('./mb-movement-register/mb-movement-register.module').then(m => m.MbMovementRegisterPageModule),
+      },
+      {
+        path: 'mb-movement-register/:uid',
+        loadChildren: () => import('./mb-movement-register/mb-movement-register.module').then(m => m.MbMovementRegisterPageModule),
+      },
+      {
+        path: 'pwd-offices',
+        loadChildren: () => import('./pwd-offices/pwd-offices.module').then(m => m.PwdOfficesPageModule),
+      },
+      {
+        path: 'pwd-offices/office/:officeId',
+        loadChildren: () => import('./pwd-offices/pwd-offices.module').then(m => m.PwdOfficesPageModule),
+      },
+      {
+        path: 'pwd-agencies',
+        loadChildren: () => import('./pwd-agencies/pwd-agencies.module').then(m => m.PwdAgenciesPageModule),
+      },
+      {
+        path: 'users-list',
+        component: UsersListComponent,
+      },
+      {
+        path: 'user-office/:uid',
+        component: UserOfficeComponent,
+      },
+    ]
   }
 ];
 
@@ -19,4 +87,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

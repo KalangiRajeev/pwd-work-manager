@@ -1,0 +1,55 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>MB Register</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <div [formGroup]="searchFormGroup">
+      <ion-searchbar [debounce]="1000" formControlName="searchFormControl"></ion-searchbar>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">MB Movement Register</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-fab class="ion-fab" slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button routerLink="/main/mb-movement-register/create">
+      <ion-icon name="create-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-list>
+    <ion-chip button slot="start" (click)="loadWhenAllIsSelected()">
+      <ion-icon name="logo-electron" color="medium"></ion-icon>
+      <ion-label class="ion-text-wrap">All</ion-label>
+    </ion-chip>
+    <ion-chip button slot="start" (click)="loadWhenOpenIsSelected()">
+      <ion-icon name="alert-outline" color="warning"></ion-icon>
+      <ion-label class="ion-text-wrap">Open</ion-label>
+    </ion-chip>
+    <ion-chip button slot="start" (click)="loadWhenClosedIsSelected()">
+      <ion-icon name="pause-circle" color="danger"></ion-icon>
+      <ion-label class="ion-text-wrap">Closed</ion-label>
+    </ion-chip>
+
+    <ion-item *ngFor="let mb of $mbRegister | async" button detail="true" detail-icon="caret-forward"
+      [routerLink]="['/main/mb-movement-register/details', mb.id]">
+      <ion-label class="ion-text-wrap">
+        <b>MB No.{{mb.mbNumber}} </b>
+        <ion-badge slot="end" [color]="getKeyByValue(mb.mbStatus)">{{mb.mbStatus}}</ion-badge>
+        <ion-label class="ion-text-wrap">
+          <p>{{mb.issuedToOffice.name}}</p>
+        </ion-label>
+      </ion-label>
+
+    </ion-item>
+  </ion-list>
+  
+</ion-content>

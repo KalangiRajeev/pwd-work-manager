@@ -1,0 +1,43 @@
+.form-add-measurements {
+    margin: 1rem;
+    .input-fields {
+      margin-top: 1rem;
+    }
+  
+    .ion-buttons {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin: 2rem 0 0 0;
+    }
+  
+    .ion-date {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      margin: 2rem 0 0 0;
+    }
+  
+    .half-width {
+      display: flex;
+      justify-content: space-between;
+      .left {
+          margin-right: .5rem;
+      }
+      .right {
+          margin-left: .5rem;
+      }
+    }
+  
+    mat-form-field {
+      width: 100%;
+      margin-top: 1rem;
+    }
+  }
+  
+  .ion-buttons{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin: 2rem 1rem;
+  }

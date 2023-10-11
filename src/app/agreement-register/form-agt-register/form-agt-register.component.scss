@@ -1,0 +1,29 @@
+.form-agt-register {
+    margin: 1rem;
+    .input-fields {
+        margin: 1rem 0;
+    }
+
+    .ion-buttons{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 2rem 0 0 0;
+    }
+
+    .date{
+        margin-top: 1rem;
+    }    
+
+    mat-form-field {
+        width:100%
+    }
+}
+
+.text-2-lines {
+    overflow: hidden;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}

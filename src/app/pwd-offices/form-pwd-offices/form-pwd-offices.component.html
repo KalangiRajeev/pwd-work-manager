@@ -1,0 +1,63 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button icon="chevron-back" defaultHref="/pwd-offices"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Enter PWD Office Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Enter PWD Office Details</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+
+  <div class="form-pwd-offices">
+    <form [formGroup]="officeFormGroup">
+      <ion-input formControlName="name" formclass="input-fields" label="Name of Office" label-placement="floating"
+        fill="outline" placeholder="Enter text"></ion-input>
+      <ion-textarea formControlName="address" class="input-fields" label="Address of Office" label-placement="floating"
+        fill="outline" placeholder="Enter text" autoGrow="true"></ion-textarea>
+
+
+      <ion-label class="input-fields">Is Focal?</ion-label>
+      <ion-segment formControlName="isFocal" [value]="false">
+        <ion-segment-button [value]="false">
+          <ion-label>FALSE</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="true">
+          <ion-label>TRUE</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Add Subordinate Office</mat-label>
+        <input matInput type="text" placeholder="Pick one" aria-label="associatedOffice"
+          [formControl]="subOffices" [matAutocomplete]="autoAssoOffice">
+        <mat-autocomplete #autoAssoOffice="matAutocomplete" [displayWith]="displayFn" (optionSelected)='getSelectedValue($event.option.value)'>
+          <mat-option *ngFor="let option of allOffices$ | async" [value]="option">{{option.name}}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <ion-chip *ngFor="let o of subordinateOffices">
+        <ion-icon name="business" color="primary"></ion-icon>
+        <ion-label>{{o.name}}</ion-label>
+        <ion-icon name="close" (click)="removeSubordinateOffice(o)"></ion-icon>
+      </ion-chip>
+
+    </form>
+
+    <div class="ion-buttons">
+      <ion-buttons slot="secondary">
+        <ion-button fill="outline" routerLink="/main/pwd-offices" routerDirection="back"> Cancel </ion-button>
+      </ion-buttons>
+      <ion-buttons slot="primary">
+        <ion-button fill="solid" type="submit" (click)="savePwdOffice()"> Save Details </ion-button>
+      </ion-buttons>
+    </div>
+  </div>
+
+</ion-content>

@@ -1,0 +1,88 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button icon="chevron-back" defaultHref="/main/agreement-register"></ion-back-button>
+    </ion-buttons>
+    <ion-title> {{this.isEditBill ? 'Edit' : 'Add'}} Bill</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{this.isEditBill ? 'Edit' : 'Add'}} Bill</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div [formGroup]="billFormGroup" class="form-add-bill">
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Select MB for Bill</mat-label>
+      <input matInput type="text" placeholder="Pick one" aria-label="mb" [formControl]="mbFC"
+        [matAutocomplete]="autoMB">
+      <mat-autocomplete #autoMB="matAutocomplete" [displayWith]="displayFnMbRecord">
+        <mat-option *ngFor="let option of $mbRecords | async" [value]="option">{{option.mbNumber}}</mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <div class="half-width">
+      <mat-form-field class="left">
+        <mat-label>From Pg.No.</mat-label>
+        <input matInput type="number" placeholder="Ex. 24" formControlName="fromPg">
+      </mat-form-field>
+
+      <mat-form-field class="right">
+        <mat-label>To Pg.No.</mat-label>
+        <input matInput type="number" placeholder="Ex. 54" formControlName="toPg">
+      </mat-form-field>  
+    </div>
+
+    <mat-form-field>
+      <mat-label>Status of Work</mat-label>
+      <mat-select formControlName="billTypeFC">
+        <mat-option *ngFor="let o of billTypes" [value]="o">{{ o }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Date of Recomendation</mat-label>
+      <input matInput [matDatepicker]="picker1" [formControl]="dateOfRecomendation">
+      <mat-hint>DD/MM/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Measured by @Office</mat-label>
+      <input matInput type="text" 
+        placeholder="Pick one" 
+        aria-label="md" 
+        [formControl]="officeRecommended"
+        [matAutocomplete]="autom">
+      <mat-autocomplete #autom="matAutocomplete" [displayWith]="displayFnOffice"> 
+        <mat-option *ngFor="let option of $officesMsd | async" [value]="option">{{option.name}}</mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+      <mat-form-field class="left">
+        <mat-label>Current Bill Amount</mat-label>
+        <input matInput type="number" placeholder="Rs.24,00,000" formControlName="currentBillAmount">
+      </mat-form-field>
+
+      <mat-form-field class="right">
+        <mat-label>Upto date Bill Amount</mat-label>
+        <input matInput type="number" placeholder="Rs.1,54,00,000" formControlName="uptoDateBillAmount">
+      </mat-form-field>  
+
+</div>
+
+<div class="ion-buttons">
+  <ion-buttons slot="secondary">
+    <ion-button fill="outline"
+      [routerLink]="agtRegId ? '/main/agreement-register/details/'+ agtRegId: '/main/agreement-register'" routerDirection="back"> Cancel </ion-button>
+  </ion-buttons>
+  <ion-buttons slot="primary">
+    <ion-button fill="solid" type="submit" (click)="saveBill()"> Save Details </ion-button>
+  </ion-buttons>
+</div>
+</ion-content>

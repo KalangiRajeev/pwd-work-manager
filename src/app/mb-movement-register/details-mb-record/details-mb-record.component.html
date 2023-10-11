@@ -1,0 +1,58 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button icon="chevron-back" defaultHref="/main/mb-movement-register"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button fill="fill" (click)="navigateToEditPage()">
+        <ion-icon slot="end" name="create"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{mbRecord ? 'MB.No' + mbRecord.mbNumber : 'MB Details'}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{mbRecord ? 'MB.No' + mbRecord.mbNumber : 'MB Details'}}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-item>
+    <ion-label *ngIf="mbRecord" slot="end">
+      Issued on {{mbRecord.issuedOn | date}}
+    </ion-label>
+  </ion-item>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Measurements</ion-label>
+    </ion-list-header>
+
+    <ion-item button detail="true" detail-icon="caret-forward" *ngFor="let msmt of $measurements | async"
+      [routerLink]="['/main/agreement-register/details/', msmt.agtRegId]">
+      <ion-label class="ion-text-wrap">
+        <b>Agt No.{{msmt.agtNo}}</b>
+        <p ngClass="text">{{msmt.measurementType | titlecase}} measurements recorded from Pg.{{msmt.fromPg}} to Pg.{{msmt.toPg}} on {{msmt.dateOfMeasurement | date}} by {{msmt.measuredByOffice.name}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  
+  <br>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Bills</ion-label>
+    </ion-list-header>
+
+    <ion-item button detail="true" detail-icon="caret-forward" *ngFor="let bill of $bills | async"
+        [routerLink]="['/main/agreement-register/details', bill.agtRegId]">
+        <ion-label class="ion-text-wrap">
+          <b>Agt No.{{bill.agtNo}} </b>
+          <p ngClass="text">{{bill.billType | titlecase}} bill from Pg.{{bill.fromPg}} to Pg.{{bill.toPg}} on {{bill.dateOfRecommendation | date}} by {{bill.officeRecommended.name}} for {{bill.currentBillAmount | currency:'INR'}} & upto date given is {{bill.uptoDateBillAmount | currency:'INR'}}</p>
+        </ion-label>
+      </ion-item>
+  </ion-list>
+
+</ion-content>

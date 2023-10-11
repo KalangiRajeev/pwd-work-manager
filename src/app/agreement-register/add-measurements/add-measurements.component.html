@@ -1,0 +1,99 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button icon="chevron-back" defaultHref="/main/agreement-register"></ion-back-button>
+    </ion-buttons>
+    <ion-title> {{this.isEditMsmt ? 'Edit' : 'Add'}} Measurements</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Add Measurements</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div [formGroup]="measurementsFormGroup" class="form-add-measurements">
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Select MB for Measurements</mat-label>
+        <input matInput type="text" placeholder="Pick one" aria-label="mb" [formControl]="mbFC"
+          [matAutocomplete]="autoMB">
+        <mat-autocomplete #autoMB="matAutocomplete" [displayWith]="displayFnMbRecord">
+          <mat-option *ngFor="let option of $mbRecords | async" [value]="option">{{option.mbNumber}}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <div class="half-width">
+        <mat-form-field class="left">
+          <mat-label>From Pg.No.</mat-label>
+          <input matInput type="number" placeholder="Ex. 24" formControlName="fromPg">
+        </mat-form-field>
+  
+        <mat-form-field class="right">
+          <mat-label>To Pg.No.</mat-label>
+          <input matInput type="number" placeholder="Ex. 54" formControlName="toPg">
+        </mat-form-field>  
+      </div>
+
+      <mat-form-field>
+        <mat-label>Status of Work</mat-label>
+        <mat-select formControlName="measurementTypeFC">
+          <mat-option *ngFor="let o of measurementTypes" [value]="o">{{ o }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Date of Measurement</mat-label>
+        <input matInput [matDatepicker]="picker1" [formControl]="dateOfMeasurementsFC">
+        <mat-hint>DD/MM/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Measured by @Office</mat-label>
+        <input matInput type="text" 
+          placeholder="Pick one" 
+          aria-label="md" 
+          [formControl]="measuredByOffice"
+          [matAutocomplete]="autom">
+        <mat-autocomplete #autom="matAutocomplete" [displayWith]="displayFnOffice"> 
+          <mat-option *ngFor="let option of $officesMsd | async" [value]="option">{{option.name}}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Date of Check Measurement</mat-label>
+        <input matInput [matDatepicker]="picker2" [formControl]="dateOfCheckMeasurementsFC">
+        <mat-hint>DD/MM/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Check Measured by @Office</mat-label>
+        <input matInput type="text" 
+          placeholder="Pick one" 
+          aria-label="cmd" 
+          [formControl]="checkMeasuredByOffice"
+          [matAutocomplete]="autocm">
+        <mat-autocomplete #autocm="matAutocomplete" [displayWith]="displayFnOffice"> 
+          <mat-option *ngFor="let option of $officesCkMsd | async" [value]="option">{{option.name}}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+  </div>
+
+  <div class="ion-buttons">
+    <ion-buttons slot="secondary">
+      <ion-button fill="outline"
+        [routerLink]="agtRegId ? '/main/agreement-register/details/'+ agtRegId: '/main/agreement-register'" routerDirection="back"> Cancel </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="primary">
+      <ion-button fill="solid" type="submit" (click)="saveMeasurements()"> Save Details </ion-button>
+    </ion-buttons>
+  </div>
+
+</ion-content>

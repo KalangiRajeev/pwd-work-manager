@@ -1,0 +1,54 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button *ngIf="officeId; else menuButton" icon="chevron-back" defaultHref="/main/agreement-register"></ion-back-button>
+      <ng-template #menuButton>
+        <ion-menu-button ></ion-menu-button>
+      </ng-template>
+    </ion-buttons>
+    <ion-title>{{existingOffice ? existingOffice.name : 'PWD Offices'}}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <div [formGroup]="searchFormGroup">
+      <ion-searchbar [debounce]="500" formControlName="searchFormControl"></ion-searchbar>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{existingOffice ? existingOffice.name : 'PWD Offices'}}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-fab class="ion-fab" slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button routerLink="/main/pwd-offices/create">
+      <ion-icon name="create-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-list>
+    <ion-item-sliding *ngFor="let office of filteredOffices">
+      <ion-item-options side="end">
+        <ion-item-option color="danger">
+          <ion-icon slot="icon-only" name="trash" button></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+
+      <ion-item-options side="start">
+        <ion-item-option color="success">
+          <ion-icon slot="icon-only" name="create" button [routerLink]="['/main/pwd-offices/edit',office.id]"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+
+      <ion-item button detail="true" detail-icon="caret-forward" (click)="navigateToPage(office)">
+        <ion-label>
+          <b>{{office.name}} </b>
+          <p ngClass="text">{{office.address}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+
+</ion-content>
