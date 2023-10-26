@@ -3,6 +3,12 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button>
+        <!-- <ion-icon slot="icon-only" name="logo-reddit"></ion-icon> -->
+        {{$recordCount | async}}
+      </ion-button>
+    </ion-buttons>
     <ion-title>MB Register</ion-title>
   </ion-toolbar>
   <ion-toolbar>
@@ -39,11 +45,13 @@
       <ion-label class="ion-text-wrap">Closed</ion-label>
     </ion-chip>
 
-    <ion-item *ngFor="let mb of $mbRegister | async" button detail="true" detail-icon="caret-forward"
+    <ion-item *ngFor="let mb of $mbRegister | async; let i = index" button detail="true" detail-icon="caret-forward"
       [routerLink]="['/main/mb-movement-register/details', mb.id]">
       <ion-label class="ion-text-wrap">
-        <b>MB No.{{mb.mbNumber}} </b>
-        <ion-badge slot="end" [color]="getKeyByValue(mb.mbStatus)">{{mb.mbStatus}}</ion-badge>
+        <div class="flex-inline">
+          <b>({{i+1}}) MB No.{{mb.mbNumber}}</b>
+          <mat-chip highlighted [color]="mb.mbStatus === 'Open' ? 'accent' : 'warn'">{{mb.mbStatus}}</mat-chip>
+        </div>
         <ion-label class="ion-text-wrap">
           <p>{{mb.issuedToOffice.name}}</p>
         </ion-label>

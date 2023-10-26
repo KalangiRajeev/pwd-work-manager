@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import {MatIconModule} from '@angular/material/icon';
+import {MatChipsModule} from '@angular/material/chips';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import {MatIconModule} from '@angular/material/icon';
     MatNativeDateModule,
     MatRippleModule,
     MatTabsModule,
-    MatIconModule
+    MatIconModule,
+    MatChipsModule
   ]
 })
 export class AngularMaterialModule { }

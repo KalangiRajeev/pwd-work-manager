@@ -33,8 +33,8 @@ export enum WorkStatus {
 
 export const Colors = {
     IN_PROGRESS : 'primary',
-    COMPLETED : 'success',
-    NOT_YET_STARTED : 'warning',
-    PENDING : 'danger',
+    COMPLETED : 'accent',
+    NOT_YET_STARTED : 'warn',
+    PENDING : 'warn',
     ALL : 'medium',
 }

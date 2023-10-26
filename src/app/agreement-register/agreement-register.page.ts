@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { Firestore, collectionData, docSnapshots } from '@angular/fire/firestore';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatTabChangeEvent } from '@angular/material/tabs';
@@ -18,12 +18,14 @@ import { AppComponentService } from '../services/app-component-service/app-compo
   selector: 'app-agreement-register',
   templateUrl: './agreement-register.page.html',
   styleUrls: ['./agreement-register.page.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class AgreementRegisterPage implements OnInit {
   firestore: Firestore = inject(Firestore);
   agreementRegister$: Observable<AgreementRegister[]>;
   lastItem?: AgreementRegister;
   searchString: string = "";
+  selectedTab?: string;
 
   existingOffice?: Office;
   existingAgency?: Agency;
@@ -79,7 +81,10 @@ export class AgreementRegisterPage implements OnInit {
       this.agencyId = params['agencyId']
       const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
       if (this.officeId) {
-        const q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        var q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        if (this.selectedTab && this.selectedTab !== 'All') {
+          q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), where('workStatus', '==', this.selectedTab), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        }
         this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
         getCountFromServer(q).then(snapShot => {
           const recordsCount = snapShot.data().count;
@@ -94,7 +99,10 @@ export class AgreementRegisterPage implements OnInit {
         });
       }
       if (this.agencyId) {
-        const q = query(agtRegCollection, where('agency.id', '==', this.agencyId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        var q = query(agtRegCollection, where('agency.id', '==', this.agencyId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        if (this.selectedTab) {
+          q = query(agtRegCollection, where('agency.id', '==', this.agencyId), where('workStatus', '==', this.selectedTab), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        }
         this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
         getCountFromServer(q).then(snapShot => {
           const recordsCount = snapShot.data().count;
@@ -119,7 +127,10 @@ export class AgreementRegisterPage implements OnInit {
     this.searchFormGroup.get('searchFormControl')?.valueChanges.subscribe(searchString => {
       this.searchString = searchString;
       const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
-      const q = query(agtRegCollection, orderBy('agreementNumber'), startAt(searchString), endAt(searchString + '~'));
+      var q = query(agtRegCollection, orderBy('agreementNumber'), startAt(searchString), endAt(searchString + '~'));
+      if (this.selectedTab) {
+        q = query(agtRegCollection, where('workStatus', '==', this.selectedTab), where('associatedOffice.id', '==', this.officeId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+      }
       this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
       getCountFromServer(q).then(snapShot => {
         const recordsCount = snapShot.data().count;
@@ -127,7 +138,10 @@ export class AgreementRegisterPage implements OnInit {
       });
 
       if (this.officeId) {
-        const q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        var q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        if (this.selectedTab) {
+         q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), where('workStatus', '==', this.selectedTab), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        }
         this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
         getCountFromServer(q).then(snapShot => {
           const recordsCount = snapShot.data().count;
@@ -135,7 +149,10 @@ export class AgreementRegisterPage implements OnInit {
         });
       }
       if (this.agencyId) {
-        const q = query(agtRegCollection, where('agency.id', '==', this.agencyId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        var q = query(agtRegCollection, where('agency.id', '==', this.agencyId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        if (this.selectedTab) {
+          var q = query(agtRegCollection, where('agency.id', '==', this.agencyId), where('workStatus', '==', this.selectedTab), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        }
         this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
         getCountFromServer(q).then(snapShot => {
           const recordsCount = snapShot.data().count;
@@ -227,7 +244,8 @@ export class AgreementRegisterPage implements OnInit {
 
 
   tabSelectedTabChange(changeEvent: MatTabChangeEvent) {
-    console.log('Index: ' + changeEvent.tab.textLabel);
+    this.selectedTab = changeEvent.tab.textLabel;
+
     if (changeEvent.tab.textLabel !== 'All') {
       const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
       const q = query(agtRegCollection, where('workStatus', '==', changeEvent.tab.textLabel), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));

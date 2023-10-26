@@ -44,6 +44,10 @@ const routes: Routes = [
   {
     path: ':agtRegId/suppl-agt/create',
     component: FormSupplAgtComponent
+  },
+  {
+    path: ':agtRegId/suppl-agt/edit/:id',
+    component: FormSupplAgtComponent
   }
 ];
 

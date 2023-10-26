@@ -145,10 +145,10 @@ export class AddMeasurementsComponent implements OnInit {
 
       this.mbFC.setValue(m.mb);
       this.measurementTypeFC.setValue(m.measurementType);
-      this.dateOfMeasurementsFC.setValue(new Date(m.dateOfMeasurement));
+      this.dateOfMeasurementsFC.setValue(new Date(m.dateOfMeasurement).toISOString());
       this.measuredByOffice.setValue(m.measuredByOffice);
       if (m.dateOfCheckMeasurement)
-        this.dateOfCheckMeasurementsFC.setValue(new Date(m.dateOfCheckMeasurement)); 
+        this.dateOfCheckMeasurementsFC.setValue(new Date(m.dateOfCheckMeasurement).toISOString()); 
       if(m.checkMeasurementOffice)
         this.checkMeasuredByOffice.setValue(m.checkMeasurementOffice);
     })

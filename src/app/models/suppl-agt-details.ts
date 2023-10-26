@@ -11,5 +11,5 @@ export interface SupplAgtDetails {
     conclAtOffice: Office,
     agency: Agency,
     lastModifiedOn: number,
-    lastModifiedBy?: string
+    lastModifiedBy?: string | null
 }

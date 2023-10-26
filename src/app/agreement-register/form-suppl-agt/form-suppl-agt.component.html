@@ -3,14 +3,13 @@
     <ion-buttons slot="start">
       <ion-back-button icon="chevron-back" defaultHref="/main/agreement-register"></ion-back-button>
     </ion-buttons>
-    <ion-title> {{this.isEditMode ? 'Edit' : 'Add'}} Suppl Agt Details</ion-title>
+    <ion-title> {{this.isEditMode ? 'Add Suppl Agt' : 'Edit Suppl Agt'}} - {{agreementRegister?.agreementNumber}}</ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">{{this.isEditMode ? 'Edit' : 'Add'}} Suppl Agt Details</ion-title>
+      <ion-title size="large">{{this.isEditMode ? 'Add Suppl Agt' : 'Edit Suppl Agt'}} - {{agreementRegister?.agreementNumber}}</ion-title>
     </ion-toolbar>
   </ion-header>
 
@@ -40,6 +39,15 @@
         [matAutocomplete]="autoOffice">
       <mat-autocomplete #autoOffice="matAutocomplete" [displayWith]="displayFn">
         <mat-option *ngFor="let option of focalOffices$ | async" [value]="option">{{option.name}}</mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Agency</mat-label>
+      <input matInput type="text" placeholder="Pick one" aria-label="agency" [formControl]="agencyFC"
+        [matAutocomplete]="autoAgency">
+      <mat-autocomplete #autoAgency="matAutocomplete" [displayWith]="displayFn">
+        <mat-option *ngFor="let option of agencies$ | async" [value]="option">{{option.name}}</mat-option>
       </mat-autocomplete>
     </mat-form-field>
 

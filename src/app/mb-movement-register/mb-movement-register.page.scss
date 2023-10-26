@@ -5,3 +5,9 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
+
+  .flex-inline {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }

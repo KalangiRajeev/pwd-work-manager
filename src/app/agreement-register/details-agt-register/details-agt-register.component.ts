@@ -7,9 +7,10 @@ import { Observable, Subject } from 'rxjs';
 import { Agency } from 'src/app/models/agency';
 import { AgreementRegister } from 'src/app/models/agreement-register';
 import { Bill } from 'src/app/models/bill';
-import { AGENCIES, AGREEMENT_REGISTER, BILLS, MEASUREMENTS, OFFICES } from 'src/app/models/constants';
+import { AGENCIES, AGREEMENT_REGISTER, BILLS, MEASUREMENTS, OFFICES, SUPPL_AGT_DETAILS } from 'src/app/models/constants';
 import { Measurement } from 'src/app/models/mesaurement';
 import { Office } from 'src/app/models/office';
+import { SupplAgtDetails } from 'src/app/models/suppl-agt-details';
 
 @Component({
   selector: 'app-details-agt-register',
@@ -30,7 +31,11 @@ export class DetailsAgtRegisterComponent implements OnInit {
   $bills?: Observable<Bill[] | undefined>;
   $billsCount: Subject<number> = new Subject();
 
-  constructor(private activitedRoute: ActivatedRoute, private navController: NavController) {
+  $supplAgtDetails?: Observable<SupplAgtDetails[] | undefined>;
+  $supplAgtCount: Subject<number> = new Subject();
+
+  constructor(private activitedRoute: ActivatedRoute, 
+    private navController: NavController) {
     this.activitedRoute.params.subscribe(paramMap => {
       const documentRef = doc(this.firestore, `${AGREEMENT_REGISTER}/${paramMap['id']}`);
       
@@ -51,21 +56,26 @@ export class DetailsAgtRegisterComponent implements OnInit {
           this.office = officeSnap.data() as Office;
           this.office.id = officeSnap.id;
         });
+
+        const supplAgtsCollection = collection(this.firestore, `${AGREEMENT_REGISTER}/${this.agtRegId}/${SUPPL_AGT_DETAILS}`);
+        const qs = query(supplAgtsCollection);
+        this.$supplAgtDetails = collectionData(qs, {idField: 'id'}) as Observable<SupplAgtDetails[]>;
+        getCountFromServer(qs).then(snapShot => {
+          this.$supplAgtCount.next(snapShot.data().count);
+        });
          
         const msmtsCollection = collection(this.firestore, `${AGREEMENT_REGISTER}/${this.agtRegId}/${MEASUREMENTS}`);
         const qm = query(msmtsCollection);
         this.$measurements = collectionData(qm, {idField : 'id'}) as Observable<Measurement[]>;
         getCountFromServer(qm).then(snapShot => {
-          const recordsCount = snapShot.data().count;
-          this.$msmtsCount.next(recordsCount);
+          this.$msmtsCount.next(snapShot.data().count);
         });
 
         const billsCollection = collection(this.firestore, `${AGREEMENT_REGISTER}/${this.agtRegId}/${BILLS}`);
         const qb = query(billsCollection);
         this.$bills = collectionData(qb, {idField : 'id'}) as Observable<Bill[]>;
         getCountFromServer(qb).then(snapShot => {
-          const recordsCount = snapShot.data().count;
-          this.$billsCount.next(recordsCount);
+          this.$billsCount.next(snapShot.data().count);
         });
       })
 
@@ -81,13 +91,16 @@ export class DetailsAgtRegisterComponent implements OnInit {
     this.navController.navigateForward('/main/agreement-register/edit/' + this.agtRegId)
   }
 
-
-  deleteMeasurement(msmt: Measurement) {
-
+  editSupplAgtDetails(supplAgt: SupplAgtDetails) {
+    this.navController.navigateForward(['/main/agreement-register/',this.agtRegId,'suppl-agt', 'edit',supplAgt.id]);
   }
 
-  deleteBill(bill: Bill) {
-    
+  editMeasurement(msmt: Measurement) {
+    this.navController.navigateForward(['/main/agreement-register/',this.agreementRegister?.associatedOffice?.id, 'add-measurements', this.agtRegId, this.agreementRegister?.agreementNumber ,'edit', msmt.id]);
+  }
+
+  editBill(bill: Bill) {
+    this.navController.navigateForward(['/main/agreement-register/',this.agreementRegister?.associatedOffice?.id, 'add-bill', this.agtRegId, this.agreementRegister?.agreementNumber ,'edit', bill.id]);
   }
 
 }

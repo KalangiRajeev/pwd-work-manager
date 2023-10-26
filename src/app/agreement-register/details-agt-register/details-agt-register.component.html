@@ -87,20 +87,39 @@
 
   <ion-list>
     <ion-list-header>
-      <ion-label>Measurements</ion-label>
+      <ion-label>Supplemental Agreement Details</ion-label>
     </ion-list-header>
-    <ion-item-sliding *ngFor="let msmt of $measurements | async">
-      <ion-item-options side="end">
-        <ion-item-option color="danger">
-          <ion-icon slot="icon-only" name="trash" button (click)="deleteMeasurement(msmt)"></ion-icon>
+    <ion-item-sliding *ngFor="let supplAgt of $supplAgtDetails | async">
+      <ion-item-options side="start">
+        <ion-item-option color="success">
+          <ion-icon slot="icon-only" name="create" button (click)="editSupplAgtDetails(supplAgt)"></ion-icon>
         </ion-item-option>
       </ion-item-options>
 
-      <ion-item button detail="true" detail-icon="caret-forward"
-        [routerLink]="['/main/agreement-register/',agreementRegister?.associatedOffice?.id, 'add-measurements', agtRegId, agreementRegister?.agreementNumber ,'edit', msmt.id]">
+      <ion-item>      
+        <ion-label class="ion-text-wrap">
+          <b>Suppl Agt. No.{{supplAgt.supplAgtNumber}} on {{supplAgt.dateOfSupplAgt | date}} for {{supplAgt.supplAgtAmount | currency:'INR'}}</b>
+          <p>WE/RE Details: {{supplAgt.techApprovalRef}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Measurements</ion-label>
+    </ion-list-header>
+    <ion-item-sliding *ngFor="let msmt of $measurements | async">
+      <ion-item-options side="start">
+        <ion-item-option color="success">
+          <ion-icon slot="icon-only" name="create" button (click)="editMeasurement(msmt)"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+
+      <ion-item>      
         <ion-label class="ion-text-wrap">
           <b>MB No.{{msmt.mb.mbNumber}} </b>
-          <p ngClass="text">{{msmt.measurementType | titlecase}} measurements recorded from Pg.{{msmt.fromPg}} to Pg.{{msmt.toPg}} on {{msmt.dateOfMeasurement | date}} by {{msmt.measuredByOffice.name}}</p>
+          <p>{{msmt.measurementType | titlecase}} measurements recorded from Pg.{{msmt.fromPg}} to Pg.{{msmt.toPg}} on {{msmt.dateOfMeasurement | date}} by {{msmt.measuredByOffice.name}}</p>
         </ion-label>
       </ion-item>
 
@@ -114,17 +133,16 @@
       <ion-label>Bills</ion-label>
     </ion-list-header>
     <ion-item-sliding *ngFor="let bill of $bills | async">
-      <ion-item-options side="end">
-        <ion-item-option color="danger">
-          <ion-icon slot="icon-only" name="trash" button (click)="deleteBill(bill)"></ion-icon>
+      <ion-item-options side="start">
+        <ion-item-option color="success">
+          <ion-icon slot="icon-only" name="create" button (click)="editBill(bill)"></ion-icon>
         </ion-item-option>
       </ion-item-options>
 
-      <ion-item button detail="true" detail-icon="caret-forward"
-        [routerLink]="['/main/agreement-register/',agreementRegister?.associatedOffice?.id, 'add-bill', agtRegId, agreementRegister?.agreementNumber ,'edit', bill.id]">
+      <ion-item>
         <ion-label class="ion-text-wrap">
           <b>MB No.{{bill.mb.mbNumber}} </b>
-          <p ngClass="text">{{bill.billType | titlecase}} bill from Pg.{{bill.fromPg}} to Pg.{{bill.toPg}} on {{bill.dateOfRecommendation | date}} by {{bill.officeRecommended.name}} for {{bill.currentBillAmount | currency:'INR'}} & upto date given is {{bill.uptoDateBillAmount | currency:'INR'}}</p>
+          <p>{{bill.billType | titlecase}} bill from Pg.{{bill.fromPg}} to Pg.{{bill.toPg}} on {{bill.dateOfRecommendation | date}} by {{bill.officeRecommended.name}} for {{bill.currentBillAmount | currency:'INR'}} & upto date given is {{bill.uptoDateBillAmount | currency:'INR'}}</p>
         </ion-label>
       </ion-item>
 
