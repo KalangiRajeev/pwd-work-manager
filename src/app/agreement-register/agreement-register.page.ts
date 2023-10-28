@@ -1,16 +1,17 @@
-import { Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
-import { Firestore, collectionData, docSnapshots } from '@angular/fire/firestore';
+import { Component, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
+import { Firestore, collectionData } from '@angular/fire/firestore';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { AlertController, InfiniteScrollCustomEvent, ToastController } from '@ionic/angular';
-import { DocumentReference, collection, doc, endAt, getCountFromServer, getDoc, limit, orderBy, query, startAfter, startAt, where } from 'firebase/firestore';
-import { deleteDoc } from 'firebase/firestore/lite';
-import { Observable, Subject, forkJoin, merge, mergeMap } from 'rxjs';
-import { AgreementRegister, Colors, WorkStatus } from '../models/agreement-register';
-import { AGENCIES, AGREEMENT_REGISTER, OFFICES } from '../models/constants';
 import { ActivatedRoute } from '@angular/router';
-import { Office } from '../models/office';
+import { AlertController, ToastController } from '@ionic/angular';
+import { DocumentReference, collection, doc, endAt, endBefore, getCountFromServer, getDoc, limit, limitToLast, orderBy, query, startAfter, startAt, where } from 'firebase/firestore';
+import { deleteDoc } from 'firebase/firestore/lite';
+import { Observable, Subject, of } from 'rxjs';
 import { Agency } from '../models/agency';
+import { AgreementRegister, Colors, WorkStatus } from '../models/agreement-register';
+import { AGREEMENT_REGISTER } from '../models/constants';
+import { Office } from '../models/office';
 import { AppComponentService } from '../services/app-component-service/app-component.service';
 
 
@@ -21,11 +22,16 @@ import { AppComponentService } from '../services/app-component-service/app-compo
   encapsulation: ViewEncapsulation.None
 })
 export class AgreementRegisterPage implements OnInit {
+
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+
   firestore: Firestore = inject(Firestore);
-  agreementRegister$: Observable<AgreementRegister[]>;
+  agreementRegister$?: Observable<AgreementRegister[]>;
+  agtRecords?: AgreementRegister[];
+
   lastItem?: AgreementRegister;
-  searchString: string = "";
-  selectedTab?: string;
+  searchString?: string;
+  selectedTab: string = 'All';
 
   existingOffice?: Office;
   existingAgency?: Agency;
@@ -37,6 +43,13 @@ export class AgreementRegisterPage implements OnInit {
   // pageLimit: number = 2;
 
   recordsCount$: Subject<number> = new Subject();
+  pageSize: number = 10;
+  pageIndex: number = 0;
+
+  pageSizeOptions: number[] = [5, 10, 25, 100];
+  pageEvent$: Subject<PageEvent> = new Subject();
+
+
 
   status: string[] = Object.keys(WorkStatus);
   workStatuses: string[] = ['All', ...Object.values(WorkStatus)];
@@ -67,128 +80,131 @@ export class AgreementRegisterPage implements OnInit {
   constructor(private toastController: ToastController,
     private alertController: AlertController,
     private activatedRoute: ActivatedRoute,
+    private matPaginatorIntl: MatPaginatorIntl,
     private appComponentService: AppComponentService) {
-    const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
-    const q = query(agtRegCollection, orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-    this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-    getCountFromServer(q).then(snapShot => {
-      const recordsCount = snapShot.data().count;
-      this.recordsCount$.next(recordsCount);
-    });
-
-    this.activatedRoute.params.subscribe(params => {
-      this.officeId = params['officeId'];
-      this.agencyId = params['agencyId']
-      const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
-      if (this.officeId) {
-        var q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        if (this.selectedTab && this.selectedTab !== 'All') {
-          q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), where('workStatus', '==', this.selectedTab), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        }
-        this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-        getCountFromServer(q).then(snapShot => {
-          const recordsCount = snapShot.data().count;
-          this.recordsCount$.next(recordsCount);
-        });
-
-        const documentRef = doc(this.firestore, `${OFFICES}/${params['officeId']}`);
-        docSnapshots(documentRef).subscribe(docSnap => {
-          this.existingOffice = docSnap.data() as Office;
-          this.existingOffice.id = this.officeId;
-          this.title = this.existingOffice.name
-        });
-      }
-      if (this.agencyId) {
-        var q = query(agtRegCollection, where('agency.id', '==', this.agencyId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        if (this.selectedTab) {
-          q = query(agtRegCollection, where('agency.id', '==', this.agencyId), where('workStatus', '==', this.selectedTab), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        }
-        this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-        getCountFromServer(q).then(snapShot => {
-          const recordsCount = snapShot.data().count;
-          this.recordsCount$.next(recordsCount);
-        });
-
-        const documentRef = doc(this.firestore, `${AGENCIES}/${params['agencyId']}`);
-        docSnapshots(documentRef).subscribe(docSnap => {
-          this.existingAgency = docSnap.data() as Office;
-          this.existingAgency.id = this.officeId;
-          this.title = this.existingAgency.name
-        });
-      }
-
-    });
 
 
 
   }
 
   ngOnInit() {
-    this.searchFormGroup.get('searchFormControl')?.valueChanges.subscribe(searchString => {
-      this.searchString = searchString;
-      const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
-      var q = query(agtRegCollection, orderBy('agreementNumber'), startAt(searchString), endAt(searchString + '~'));
-      if (this.selectedTab) {
-        q = query(agtRegCollection, where('workStatus', '==', this.selectedTab), where('associatedOffice.id', '==', this.officeId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-      }
-      this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-      getCountFromServer(q).then(snapShot => {
-        const recordsCount = snapShot.data().count;
-        this.recordsCount$.next(recordsCount);
-      });
 
-      if (this.officeId) {
-        var q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        if (this.selectedTab) {
-         q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), where('workStatus', '==', this.selectedTab), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        }
-        this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-        getCountFromServer(q).then(snapShot => {
-          const recordsCount = snapShot.data().count;
-          this.recordsCount$.next(recordsCount);
-        });
-      }
-      if (this.agencyId) {
-        var q = query(agtRegCollection, where('agency.id', '==', this.agencyId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        if (this.selectedTab) {
-          var q = query(agtRegCollection, where('agency.id', '==', this.agencyId), where('workStatus', '==', this.selectedTab), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        }
-        this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-        getCountFromServer(q).then(snapShot => {
-          const recordsCount = snapShot.data().count;
-          this.recordsCount$.next(recordsCount);
-        });
-      }
+    this.matPaginatorIntl.itemsPerPageLabel = 'items';
+
+    this.searchFormGroup.get('searchFormControl')?.valueChanges.subscribe(searchString => {
+      this.paginator?.firstPage();
+      this.searchString = searchString;
+      this.loadAgtRegisterCollection();
+    });
+
+    this.activatedRoute.params.subscribe(params => {
+      this.paginator?.firstPage();
+      this.officeId = params['officeId'];
+      this.agencyId = params['agencyId'];
+      this.loadAgtRegisterCollection();
     });
 
   }
 
-  loadWhenAllIsSelected() {
+  ionViewWillEnter() {
+    if (this.appComponentService.agtRegPageSize) {
+      this.pageSize = this.appComponentService.agtRegPageSize;
+      console.log(this.pageSize);
+    }
+    if (this.appComponentService.agtRegPageIndex) {
+      this.pageIndex = this.appComponentService.agtRegPageIndex;
+      console.log(this.pageIndex);
+    }
+    if (this.appComponentService.agtRegRecordsCount) {
+      this.recordsCount$.next(this.appComponentService.agtRegRecordsCount);
+    }
+    if (this.appComponentService.currentAgtRegRecords) {
+      this.agtRecords = [...this.appComponentService.currentAgtRegRecords];
+      console.log(this.agtRecords);
+      this.agreementRegister$ = new Observable(sub => {
+        sub.next(this.agtRecords);
+      })
+    }
+  }
+
+  matTabSelectedChange(changeEvent: MatTabChangeEvent) {
+    this.paginator?.firstPage();
+    this.pageIndex = 0;
+    this.selectedTab = changeEvent.tab.textLabel;
+    this.loadAgtRegisterCollection();
+  }
+
+  async loadAgtRegisterCollection(currentPageIndex?: number, isNext?: boolean) {
+    // this.paginator?.firstPage();
+
     const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
-    const q = query(agtRegCollection, orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-    this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
+    var q = query(agtRegCollection);
+
+    if (this.officeId) {
+      q = query(q, where('associatedOffice.id', '==', this.officeId));
+    }
+
+    if (this.agencyId) {
+      q = query(q, where('agency.id', '==', this.agencyId));
+    }
+
+    if (this.selectedTab !== 'All') {
+      q = query(q, where('workStatus', '==', this.selectedTab));
+    }
+
+    if (this.searchString) {
+      console.log(this.searchString);
+      q = query(q, orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '~'))
+    }
+
     getCountFromServer(q).then(snapShot => {
       const recordsCount = snapShot.data().count;
       this.recordsCount$.next(recordsCount);
     });
 
-    if (this.officeId) {
-      const q = query(agtRegCollection, where('associatedOffice.id', '==', this.officeId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-      this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-      getCountFromServer(q).then(snapShot => {
-        const recordsCount = snapShot.data().count;
-        this.recordsCount$.next(recordsCount);
-      });
+    if (currentPageIndex && this.agtRecords) {
+      if (isNext) {
+        const docSnap = await getDoc(doc(agtRegCollection, this.agtRecords[this.agtRecords?.length - 1].id));
+        q = query(q,
+          startAfter(docSnap), 
+          limit(this.pageSize));
+      } else {
+        const docSnap = await getDoc(doc(agtRegCollection, this.agtRecords[0].id));
+        q = query(q, 
+          endBefore(docSnap), 
+          limitToLast(this.pageSize));
+      }
+    } else {
+      q = query(q, limit(this.pageSize));
     }
-    if (this.agencyId) {
-      const q = query(agtRegCollection, where('agency.id', '==', this.agencyId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-      this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-      getCountFromServer(q).then(snapShot => {
-        const recordsCount = snapShot.data().count;
-        this.recordsCount$.next(recordsCount);
-      });
+
+    this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
+    this.agreementRegister$?.subscribe(agtRegRec => {
+      this.agtRecords = [...agtRegRec];
+      this.appComponentService.currentAgtRegRecords = [...this.agtRecords];
+    });
+  }
+
+  handlePageEvent(event: PageEvent) {
+    this.appComponentService.agtRegPageSize = event.pageSize;
+    this.appComponentService.agtRegPageIndex = event.pageIndex;
+
+    if (this.pageSize !== event.pageSize) {
+      this.pageIndex = 0;
+      this.pageSize = event.pageSize;
+      this.paginator?.firstPage();
+      this.loadAgtRegisterCollection(this.pageIndex);
+    } else {
+      var isNext = true;
+      this.pageIndex = event.pageIndex;
+      if (this.pageIndex > event.pageIndex) {
+        isNext = false
+      }
+      this.loadAgtRegisterCollection(event.pageIndex, isNext);
     }
   }
+
+
 
   getKeyByValue(value: string): string {
     if (value === WorkStatus.COMPLETED) {
@@ -242,62 +258,5 @@ export class AgreementRegisterPage implements OnInit {
     console.log("delete clicked");
   }
 
-
-  tabSelectedTabChange(changeEvent: MatTabChangeEvent) {
-    this.selectedTab = changeEvent.tab.textLabel;
-
-    if (changeEvent.tab.textLabel !== 'All') {
-      const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
-      const q = query(agtRegCollection, where('workStatus', '==', changeEvent.tab.textLabel), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-      this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-      getCountFromServer(q).then(snapShot => {
-        const recordsCount = snapShot.data().count;
-        this.recordsCount$.next(recordsCount);
-      });
-
-      if (this.officeId) {
-        const q = query(agtRegCollection, where('workStatus', '==', changeEvent.tab.textLabel), where('associatedOffice.id', '==', this.officeId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-        getCountFromServer(q).then(snapShot => {
-          const recordsCount = snapShot.data().count;
-          this.recordsCount$.next(recordsCount);
-        });
-      }
-      if (this.agencyId) {
-        const q = query(agtRegCollection, where('workStatus', '==', changeEvent.tab.textLabel), where('agency.id', '==', this.agencyId), orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
-        getCountFromServer(q).then(snapShot => {
-          const recordsCount = snapShot.data().count;
-          this.recordsCount$.next(recordsCount);
-        });
-      }
-
-    } else {
-      this.loadWhenAllIsSelected();
-    }
-  }
-
-  // async loadMore(event: any) {
-  //   setTimeout(async () => {
-  //     // await this.page.more();
-  //     console.log(this.lastItem);
-
-  //     const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
-  //     // let q = query(agtRegCollection, orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'), limit(this.pageLimit));
-  //     if (this.lastItem) {
-  //       const docRef = doc(this.firestore, `${AGREEMENT_REGISTER}/${this.lastItem.id}`)
-  //       const docSnap = await getDoc(docRef);
-  //       const q = query(agtRegCollection, startAfter(docSnap), limit(this.pageLimit));
-  //       this.agreementRegister$ = merge(this.agreementRegister$, collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>);
-
-  //       getCountFromServer(q).then(snapShot => {
-  //         const recordsCount = snapShot.data().count;
-  //         this.recordsCount$.next(recordsCount);
-  //       });
-  //     }
-
-  //     (event as InfiniteScrollCustomEvent).target.complete();
-  //   }, 500);
-  // }
 
 }

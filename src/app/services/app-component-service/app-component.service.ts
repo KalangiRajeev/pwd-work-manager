@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Auth, GoogleAuthProvider, UserCredential, signInWithPopup } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { Subject } from 'rxjs';
+import { AgreementRegister } from 'src/app/models/agreement-register';
 import { Office } from 'src/app/models/office';
 import { User } from 'src/app/models/user';
 
@@ -21,6 +22,11 @@ export class AppComponentService {
   $loggedInUser: Subject<User> = new Subject();
   loggedInUser?: User; 
   uid?: string | null = sessionStorage.getItem('user');
+
+  agtRegPageSize?: number;
+  agtRegPageIndex?: number;
+  currentAgtRegRecords?: AgreementRegister[];
+  agtRegRecordsCount?: number;
 
   constructor() { 
     this.$loggedInUser.subscribe(user => {
