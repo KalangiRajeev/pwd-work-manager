@@ -87,7 +87,7 @@ export class FolderPage implements OnInit {
       if (this.associatedOffice && this.associatedOffice.subOffices && this.associatedOffice.subOffices.length > 0 ) {
         this.navController.navigateForward(['/main/pwd-offices/mb-register', this.associatedOffice.id]);
       } else {
-        this.navController.navigateForward(['/main/agreement-register/office', this.associatedOffice?.id]);
+        this.navController.navigateForward(['/main/mb-movement-register', this.associatedOffice?.id]);
       }
     }
   }
