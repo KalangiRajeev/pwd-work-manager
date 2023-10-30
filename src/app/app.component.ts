@@ -15,9 +15,7 @@ export class AppComponent {
   constructor(private navController: NavController) {}
 
   ngOnInit() {
-    if(sessionStorage.getItem('uid')) {
-      // this.navController.navigateForward(['main']);
-    }
+     
   }
 
   

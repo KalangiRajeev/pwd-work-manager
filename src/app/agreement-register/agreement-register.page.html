@@ -30,6 +30,8 @@
     </ion-fab-button>
   </ion-fab>
 
+  <mat-progress-bar mode="indeterminate" color="accent" *ngIf="isLoading"></mat-progress-bar>
+
   <mat-tab-group backgroundColor="primary" (selectedTabChange)="matTabSelectedChange($event)" animationDuration="150ms">
     <mat-tab *ngFor="let tabtitle of workStatuses" class="tab-title" [label]="tabtitle">
       <ion-list>
@@ -41,7 +43,8 @@
           </ion-item-options>
 
           <ion-item button detail="true" detail-icon="caret-forward"
-            [routerLink]="['/main/agreement-register/details/', agtReg.id]">
+            [routerLink]="['/main/agreement-register/details/', agtReg.id]" 
+            (click)="selectedAgtRegRecord(agtReg)">
             <ion-label class="ion-text-wrap">
               <div class="flex-inline">
                 <div>
@@ -65,6 +68,7 @@
   [pageSize]="pageSize" 
   [pageSizeOptions]="pageSizeOptions" 
   [pageIndex]="pageIndex"
+  [disabled]="isDisabled"
   (page)="handlePageEvent($event)" aria-label="Select page">
   </mat-paginator>
 </ion-footer>

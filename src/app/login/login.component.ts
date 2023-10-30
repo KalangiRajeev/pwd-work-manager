@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
         this.saveUpdateUser(user)
           .then(user => {
             const agtRefDoc = doc(this.firestore, USERS, user.uid);
-            this.navController.navigateForward(['main', 'folder', sessionStorage.getItem('uid')]);
+            this.navController.navigateForward(['main', 'folder', 'office', sessionStorage.getItem('uid')]);
           });
       }
     })

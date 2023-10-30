@@ -21,6 +21,7 @@ export class MbMovementRegisterPage implements OnInit {
   $mbRegister?: Observable<MbRecord[]>;
   $recordCount: Subject<number> = new Subject();
   _uid?: string;
+  _officeId?: string;
   existingUser?: User;
 
   searchFormGroup: FormGroup = new FormGroup({
@@ -30,30 +31,36 @@ export class MbMovementRegisterPage implements OnInit {
   constructor(private activatedRoute: ActivatedRoute) {
 
     this.activatedRoute.params.subscribe(params => {
-      this._uid = params['uid'];
-      if (this._uid) {
-        const usersRefDoc = doc(this.firestore, `${USERS}/${this._uid}`);
-        docSnapshots(usersRefDoc).subscribe(docSnap => {
-          this.existingUser = docSnap.data() as User;
-          this.existingUser.uid = docSnap.id;
-          console.log(this.existingUser);
-          const mbRecords = collection(this.firestore, MB_RECORDS);
-          const q = query(mbRecords, where('issuedToOffice.id', '==', this.existingUser.associatedOffice?.id), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-          this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
-          getCountFromServer(q).then(snapShot => {
-            const recordsCount = snapShot.data().count;
-            this.$recordCount.next(recordsCount);
-          });
-        });
-      } else {
+      // this._uid = params['uid'];
+
+      this._officeId = params['officeId'];
+      
+      // if (this._uid) {
+      //   const usersRefDoc = doc(this.firestore, `${USERS}/${this._uid}`);
+      //   docSnapshots(usersRefDoc).subscribe(docSnap => {
+      //     this.existingUser = docSnap.data() as User;
+      //     this.existingUser.uid = docSnap.id;
+      //     console.log(this.existingUser);
+      //     const mbRecords = collection(this.firestore, MB_RECORDS);
+      //     const q = query(mbRecords, where('issuedToOffice.id', '==', this.existingUser.associatedOffice?.id), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+      //     this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
+      //     getCountFromServer(q).then(snapShot => {
+      //       const recordsCount = snapShot.data().count;
+      //       this.$recordCount.next(recordsCount);
+      //     });
+      //   });
+      // } else 
+
+      if (this._officeId) {
         const mbRecords = collection(this.firestore, MB_RECORDS);
-        const q = query(mbRecords, orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        const q = query(mbRecords, where('issuedToOffice.id', '==', this._officeId), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
         this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
         getCountFromServer(q).then(snapShot => {
           const recordsCount = snapShot.data().count;
           this.$recordCount.next(recordsCount);
         });
-      }
+      } 
+      
     });
 
   }
@@ -62,7 +69,7 @@ export class MbMovementRegisterPage implements OnInit {
     this.searchFormGroup.get('searchFormControl')?.valueChanges.subscribe(searchString => {
       this.searchString = searchString;
       const mbRecords = collection(this.firestore, MB_RECORDS);
-      const q = query(mbRecords, orderBy('mbNumber'), startAt(searchString), endAt(searchString + '\uf8ff'));
+      const q = query(mbRecords, where('issuedToOffice.id', '==', this._officeId), orderBy('mbNumber'), startAt(searchString), endAt(searchString + '\uf8ff'));
       this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
       getCountFromServer(q).then(snapShot => {
         const recordsCount = snapShot.data().count;
@@ -83,7 +90,7 @@ export class MbMovementRegisterPage implements OnInit {
 
   loadWhenAllIsSelected() {
     const mbRecords = collection(this.firestore, MB_RECORDS);
-    const q = query(mbRecords, orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+    const q = query(mbRecords, where('issuedToOffice.id', '==', this._officeId), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
     this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
     getCountFromServer(q).then(snapShot => {
       const recordsCount = snapShot.data().count;
@@ -93,7 +100,7 @@ export class MbMovementRegisterPage implements OnInit {
 
   loadWhenOpenIsSelected() {
     const mbRecords = collection(this.firestore, MB_RECORDS);
-    const q = query(mbRecords, where('mbStatus', '==', MbStatus.OPEN), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+    const q = query(mbRecords, where('issuedToOffice.id', '==', this._officeId), where('mbStatus', '==', MbStatus.OPEN), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
     this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
     getCountFromServer(q).then(snapShot => {
       const recordsCount = snapShot.data().count;
@@ -103,7 +110,7 @@ export class MbMovementRegisterPage implements OnInit {
 
   loadWhenClosedIsSelected() {
     const mbRecords = collection(this.firestore, MB_RECORDS);
-    const q = query(mbRecords, where('mbStatus', '==', MbStatus.CLOSED), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+    const q = query(mbRecords, where('issuedToOffice.id', '==', this._officeId), where('mbStatus', '==', MbStatus.CLOSED), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
     this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
     getCountFromServer(q).then(snapShot => {
       const recordsCount = snapShot.data().count;

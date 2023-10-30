@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { collectionData, docSnapshots, Firestore } from '@angular/fire/firestore';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Office } from '../models/office';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -8,7 +8,7 @@ import { collection, doc, endAt, orderBy, query, startAt } from 'firebase/firest
 import { getFinancialYears, OFFICES, USERS } from '../models/constants';
 import { AppComponentService } from '../services/app-component-service/app-component.service';
 import { User } from '../models/user';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-folder',
@@ -23,14 +23,18 @@ export class FolderPage implements OnInit {
   associatedOffice?: Office;
 
   loggedInUser?: User;
+  _title? : string;
 
-  
+  constructor(private appComponentService: AppComponentService,
+    private alertController: AlertController,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private navController: NavController) {
 
-
-  constructor(private appComponentService: AppComponentService, private alertController: AlertController, private activatedRoute: ActivatedRoute) {
     this.loggedInUser = this.appComponentService._user;
 
     this.activatedRoute.params.subscribe(params => {
+
       const documentRef = doc(this.firestore, `${USERS}/${params['uid']}`);
       docSnapshots(documentRef).subscribe(docSnap => {
         this.loggedInUser = docSnap.data() as User;
@@ -42,19 +46,26 @@ export class FolderPage implements OnInit {
             this.associatedOffice = assoOffSnap.data() as Office;
             this.associatedOffice.id = assoOffSnap.id;
           });
-        } 
+        }
       });
+
     });
 
-    
+    const url = this.router.routerState.snapshot.url;
+    if (url.includes('/mb-register')) {
+      this._title = 'MB Register'
+    } else {
+      this._title = 'Works Register'
+    }
+
 
   }
 
   ngOnInit() {
-    
+
   }
 
-  async showAlert () {
+  async showAlert() {
     const alert = await this.alertController.create({
       header: 'Alert!',
       subHeader: 'Not associated with any office!',
@@ -62,6 +73,23 @@ export class FolderPage implements OnInit {
       buttons: ['OK'],
     });
     await alert.present();
+  }
+
+  navigateToOfficeOrMbRegister() {
+    const url = this.router.routerState.snapshot.url;
+    if (url.includes('office')) {
+      if (this.associatedOffice && this.associatedOffice.subOffices && this.associatedOffice.subOffices.length > 0 ) {
+        this.navController.navigateForward(['/main/pwd-offices/office', this.associatedOffice.id]);
+      } else {
+        this.navController.navigateForward(['/main/agreement-register/office', this.associatedOffice?.id]);
+      }
+    } else if (url.includes('mb-register')) {
+      if (this.associatedOffice && this.associatedOffice.subOffices && this.associatedOffice.subOffices.length > 0 ) {
+        this.navController.navigateForward(['/main/pwd-offices/mb-register', this.associatedOffice.id]);
+      } else {
+        this.navController.navigateForward(['/main/agreement-register/office', this.associatedOffice?.id]);
+      }
+    }
   }
 }
 

@@ -3,20 +3,21 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>{{associatedOffice ? associatedOffice.name : 'Home'}}</ion-title>
+    <ion-title>{{_title ? _title : 'Home'}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">{{associatedOffice ? associatedOffice.name : 'Home'}}</ion-title>
+      <ion-title size="large">{{_title ? _title : 'Home'}}</ion-title>
     </ion-toolbar>
   </ion-header>
 
 
   <ion-list>
     <ion-item button detail="true" detail-icon="caret-forward"
+    (click)="navigateToOfficeOrMbRegister()"
       [routerLink]=" associatedOffice && associatedOffice.subOffices && associatedOffice.subOffices.length > 0 ? ['/main/pwd-offices/office', associatedOffice.id] : ['/main/agreement-register/office', associatedOffice?.id]">
       <ion-thumbnail slot="start">
         <img [src]="loggedInUser?.photoUrl" [alt]="loggedInUser?.name">

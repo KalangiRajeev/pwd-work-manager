@@ -13,15 +13,15 @@ export class MainComponent  implements OnInit {
   auth: Auth = inject(Auth);
 
   public appPages = [
-    { title: 'Home', url: `/main/folder/${sessionStorage.getItem('uid')}`, icon: 'home' },
-    { title: 'MB Register', url: `/main/mb-movement-register/${sessionStorage.getItem('uid')}`, icon: 'book' },
+    { title: 'Works Register', url: `/main/folder/office/${sessionStorage.getItem('uid')}`, icon: 'home' },
+    // { title: 'MB Register', url: `/main/mb-movement-register/${sessionStorage.getItem('uid')}`, icon: 'book' },
+    { title: 'MB Register', url: `/main/folder/mb-register/${sessionStorage.getItem('uid')}`, icon: 'book' }
   ];
   
   public adminPages = [
     { title: 'Offices', url: '/main/pwd-offices', icon: 'business' },
-    { title: 'Works Register', url: '/main/agreement-register', icon: 'browsers' },
-    { title: 'MB Register', url: '/main/mb-movement-register', icon: 'book' }, 
     { title: 'Agencies', url: '/main/pwd-agencies', icon: 'person' },
+    { title: 'MB Register', url: '/main/mb-register', icon: 'book' }, 
     { title: 'Users', url: '/main/users-list', icon: 'people'}
   ];
 

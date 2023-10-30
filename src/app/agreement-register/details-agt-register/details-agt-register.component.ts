@@ -11,6 +11,7 @@ import { AGENCIES, AGREEMENT_REGISTER, BILLS, MEASUREMENTS, OFFICES, SUPPL_AGT_D
 import { Measurement } from 'src/app/models/mesaurement';
 import { Office } from 'src/app/models/office';
 import { SupplAgtDetails } from 'src/app/models/suppl-agt-details';
+import { AppComponentService } from 'src/app/services/app-component-service/app-component.service';
 
 @Component({
   selector: 'app-details-agt-register',
@@ -18,6 +19,8 @@ import { SupplAgtDetails } from 'src/app/models/suppl-agt-details';
   styleUrls: ['./details-agt-register.component.scss'],
 })
 export class DetailsAgtRegisterComponent implements OnInit {
+
+  isLoading: boolean = false;
 
   firestore: Firestore = inject(Firestore);
   agreementRegister?: AgreementRegister;
@@ -34,18 +37,25 @@ export class DetailsAgtRegisterComponent implements OnInit {
   $supplAgtDetails?: Observable<SupplAgtDetails[] | undefined>;
   $supplAgtCount: Subject<number> = new Subject();
 
-  constructor(private activitedRoute: ActivatedRoute, 
-    private navController: NavController) {
+  constructor(private activitedRoute: ActivatedRoute,
+    private navController: NavController,
+    private appComponentService: AppComponentService) {
+
+    this.agreementRegister = this.appComponentService.selectedAgreementRegister;
+    console.log(this.agreementRegister);
+    this.isLoading = true;
+
     this.activitedRoute.params.subscribe(paramMap => {
       const documentRef = doc(this.firestore, `${AGREEMENT_REGISTER}/${paramMap['id']}`);
-      
+
       docSnapshots(documentRef).subscribe(docSnap => {
+
         this.agtRegId = paramMap['id'];
         this.agreementRegister = docSnap.data() as AgreementRegister;
         this.agreementRegister.id = docSnap.id;
-        console.log(this.agreementRegister);
-        const agencyRef = doc(this.firestore, `${AGENCIES}/${this.agreementRegister.agency.id}`);
-        const officeRef = doc(this.firestore, `${OFFICES}/${this.agreementRegister.office.id}`);
+
+        const agencyRef = doc(this.firestore, `${AGENCIES}/${this.agreementRegister?.agency.id}`);
+        const officeRef = doc(this.firestore, `${OFFICES}/${this.agreementRegister?.office.id}`);
 
         docSnapshots(agencyRef).subscribe(agencySnap => {
           this.agency = agencySnap.data() as Agency;
@@ -59,23 +69,26 @@ export class DetailsAgtRegisterComponent implements OnInit {
 
         const supplAgtsCollection = collection(this.firestore, `${AGREEMENT_REGISTER}/${this.agtRegId}/${SUPPL_AGT_DETAILS}`);
         const qs = query(supplAgtsCollection);
-        this.$supplAgtDetails = collectionData(qs, {idField: 'id'}) as Observable<SupplAgtDetails[]>;
+        this.$supplAgtDetails = collectionData(qs, { idField: 'id' }) as Observable<SupplAgtDetails[]>;
         getCountFromServer(qs).then(snapShot => {
           this.$supplAgtCount.next(snapShot.data().count);
+          this.isLoading = false;
         });
-         
+
         const msmtsCollection = collection(this.firestore, `${AGREEMENT_REGISTER}/${this.agtRegId}/${MEASUREMENTS}`);
         const qm = query(msmtsCollection);
-        this.$measurements = collectionData(qm, {idField : 'id'}) as Observable<Measurement[]>;
+        this.$measurements = collectionData(qm, { idField: 'id' }) as Observable<Measurement[]>;
         getCountFromServer(qm).then(snapShot => {
           this.$msmtsCount.next(snapShot.data().count);
+          this.isLoading = false;
         });
 
         const billsCollection = collection(this.firestore, `${AGREEMENT_REGISTER}/${this.agtRegId}/${BILLS}`);
         const qb = query(billsCollection);
-        this.$bills = collectionData(qb, {idField : 'id'}) as Observable<Bill[]>;
+        this.$bills = collectionData(qb, { idField: 'id' }) as Observable<Bill[]>;
         getCountFromServer(qb).then(snapShot => {
           this.$billsCount.next(snapShot.data().count);
+          this.isLoading = false;
         });
       })
 
@@ -92,15 +105,15 @@ export class DetailsAgtRegisterComponent implements OnInit {
   }
 
   editSupplAgtDetails(supplAgt: SupplAgtDetails) {
-    this.navController.navigateForward(['/main/agreement-register/',this.agtRegId,'suppl-agt', 'edit',supplAgt.id]);
+    this.navController.navigateForward(['/main/agreement-register/', this.agtRegId, 'suppl-agt', 'edit', supplAgt.id]);
   }
 
   editMeasurement(msmt: Measurement) {
-    this.navController.navigateForward(['/main/agreement-register/',this.agreementRegister?.associatedOffice?.id, 'add-measurements', this.agtRegId, this.agreementRegister?.agreementNumber ,'edit', msmt.id]);
+    this.navController.navigateForward(['/main/agreement-register/', this.agreementRegister?.associatedOffice?.id, 'add-measurements', this.agtRegId, this.agreementRegister?.agreementNumber, 'edit', msmt.id]);
   }
 
   editBill(bill: Bill) {
-    this.navController.navigateForward(['/main/agreement-register/',this.agreementRegister?.associatedOffice?.id, 'add-bill', this.agtRegId, this.agreementRegister?.agreementNumber ,'edit', bill.id]);
+    this.navController.navigateForward(['/main/agreement-register/', this.agreementRegister?.associatedOffice?.id, 'add-bill', this.agtRegId, this.agreementRegister?.agreementNumber, 'edit', bill.id]);
   }
 
 }

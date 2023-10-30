@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Firestore, collectionData, docSnapshots } from '@angular/fire/firestore';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { collection, doc, endAt, orderBy, query, startAt } from 'firebase/firestore';
 import { Observable } from 'rxjs';
 import { OFFICES, USERS } from '../models/constants';
@@ -36,8 +36,7 @@ export class PwdOfficesPage implements OnInit {
 
   constructor(private activatedRoute: ActivatedRoute,
     private navController: NavController,
-    private appComponentService: AppComponentService) {
-
+    private router: Router) {
 
     this.activatedRoute.params.subscribe(params => {
       this.officeId = params['officeId'];
@@ -74,11 +73,22 @@ export class PwdOfficesPage implements OnInit {
   }
 
   navigateToPage(office: Office) {
-    console.log(office);
-    if (office.subOffices?.length && office.subOffices.length > 0) {
-      this.navController.navigateForward(`/main/pwd-offices/office/${office.id}`)
+
+    const url = this.router.routerState.snapshot.url;
+
+    console.log(office, url);
+    if (url.includes('/mb-register')) {
+      if (office.subOffices?.length && office.subOffices.length > 0) {
+        this.navController.navigateForward(`/main/pwd-offices/mb-register/${office.id}`)
+      } else {
+        this.navController.navigateForward(`/main/mb-movement-register/${office.id}`)
+      }
     } else {
-      this.navController.navigateForward(`/main/agreement-register/office/${office.id}`)
+      if (office.subOffices?.length && office.subOffices.length > 0) {
+        this.navController.navigateForward(`/main/pwd-offices/office/${office.id}`)
+      } else {
+        this.navController.navigateForward(`/main/agreement-register/office/${office.id}`)
+      } 
     }
   }
 }

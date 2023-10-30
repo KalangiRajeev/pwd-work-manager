@@ -25,6 +25,9 @@ export class AgreementRegisterPage implements OnInit {
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
+  isLoading: boolean = false;
+  isDisabled: boolean = false;
+
   firestore: Firestore = inject(Firestore);
   agreementRegister$?: Observable<AgreementRegister[]>;
   agtRecords?: AgreementRegister[];
@@ -127,6 +130,10 @@ export class AgreementRegisterPage implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.appComponentService.currentAgtRegRecords = undefined
+  }
+
   matTabSelectedChange(changeEvent: MatTabChangeEvent) {
     this.paginator?.firstPage();
     this.pageIndex = 0;
@@ -136,6 +143,8 @@ export class AgreementRegisterPage implements OnInit {
 
   async loadAgtRegisterCollection(currentPageIndex?: number, isNext?: boolean) {
     // this.paginator?.firstPage();
+    this.isLoading =  true;
+    this.isDisabled = true;
 
     const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
     var q = query(agtRegCollection);
@@ -166,14 +175,16 @@ export class AgreementRegisterPage implements OnInit {
       if (isNext) {
         const docSnap = await getDoc(doc(agtRegCollection, this.agtRecords[this.agtRecords?.length - 1].id));
         q = query(q,
-          startAfter(docSnap), 
+          startAfter(docSnap),
           limit(this.pageSize));
       } else {
         const docSnap = await getDoc(doc(agtRegCollection, this.agtRecords[0].id));
-        q = query(q, 
-          endBefore(docSnap), 
+        q = query(q,
+          endBefore(docSnap),
           limitToLast(this.pageSize));
       }
+      this.appComponentService.agtRegPageIndex = currentPageIndex;
+
     } else {
       q = query(q, limit(this.pageSize));
     }
@@ -182,12 +193,14 @@ export class AgreementRegisterPage implements OnInit {
     this.agreementRegister$?.subscribe(agtRegRec => {
       this.agtRecords = [...agtRegRec];
       this.appComponentService.currentAgtRegRecords = [...this.agtRecords];
+      this.isLoading = false;
+      this.isDisabled = false;
     });
   }
 
   handlePageEvent(event: PageEvent) {
     this.appComponentService.agtRegPageSize = event.pageSize;
-    this.appComponentService.agtRegPageIndex = event.pageIndex;
+    console.log(this.appComponentService.agtRegPageIndex);
 
     if (this.pageSize !== event.pageSize) {
       this.pageIndex = 0;
@@ -258,5 +271,8 @@ export class AgreementRegisterPage implements OnInit {
     console.log("delete clicked");
   }
 
+  selectedAgtRegRecord(agtReg: AgreementRegister) {
+    this.appComponentService.selectedAgreementRegister = agtReg;
+  }
 
 }

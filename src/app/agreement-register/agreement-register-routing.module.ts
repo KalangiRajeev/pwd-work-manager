@@ -14,6 +14,14 @@ const routes: Routes = [
     component: AgreementRegisterPage
   },
   {
+    path: 'office/:officeId',
+    component: AgreementRegisterPage
+  },
+  {
+    path: 'agency/:agencyId',
+    component: AgreementRegisterPage
+  },
+  {
     path: 'create',
     component: FormAgtRegisterComponent
   },

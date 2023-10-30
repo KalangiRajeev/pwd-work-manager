@@ -30,7 +30,11 @@ const routes: Routes = [
         loadChildren: () => import('./folder/folder.module').then(m => m.FolderPageModule),
       },
       {
-        path: 'folder/:uid',
+        path: 'folder/office/:uid',
+        loadChildren: () => import('./folder/folder.module').then(m => m.FolderPageModule),
+      },
+      {
+        path: 'folder/mb-register/:uid',
         loadChildren: () => import('./folder/folder.module').then(m => m.FolderPageModule),
       },
       {
@@ -38,23 +42,15 @@ const routes: Routes = [
         loadChildren: () => import('./agreement-register/agreement-register.module').then(m => m.AgreementRegisterPageModule),
       },
       {
-        path: 'agreement-register/office/:officeId',
-        loadChildren: () => import('./agreement-register/agreement-register.module').then(m => m.AgreementRegisterPageModule),
-      },
-      {
-        path: 'agreement-register/agency/:agencyId',
-        loadChildren: () => import('./agreement-register/agreement-register.module').then(m => m.AgreementRegisterPageModule),
-      },
-      {
         path: 'bill-register',
         loadChildren: () => import('./bill-register/bill-register.module').then(m => m.BillRegisterPageModule),
       },
       {
-        path: 'mb-movement-register',
-        loadChildren: () => import('./mb-movement-register/mb-movement-register.module').then(m => m.MbMovementRegisterPageModule),
+        path: 'mb-register',
+        loadChildren: () => import('./pwd-offices/pwd-offices.module').then(m => m.PwdOfficesPageModule),
       },
       {
-        path: 'mb-movement-register/:uid',
+        path: 'mb-movement-register/:officeId',
         loadChildren: () => import('./mb-movement-register/mb-movement-register.module').then(m => m.MbMovementRegisterPageModule),
       },
       {
@@ -63,6 +59,10 @@ const routes: Routes = [
       },
       {
         path: 'pwd-offices/office/:officeId',
+        loadChildren: () => import('./pwd-offices/pwd-offices.module').then(m => m.PwdOfficesPageModule),
+      },
+      {
+        path: 'pwd-offices/mb-register/:officeId',
         loadChildren: () => import('./pwd-offices/pwd-offices.module').then(m => m.PwdOfficesPageModule),
       },
       {

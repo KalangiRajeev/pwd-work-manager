@@ -27,6 +27,7 @@ export class AppComponentService {
   agtRegPageIndex?: number;
   currentAgtRegRecords?: AgreementRegister[];
   agtRegRecordsCount?: number;
+  selectedAgreementRegister?: AgreementRegister;
 
   constructor() { 
     this.$loggedInUser.subscribe(user => {
