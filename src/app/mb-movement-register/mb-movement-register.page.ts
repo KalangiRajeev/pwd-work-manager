@@ -6,8 +6,9 @@ import { Firestore, collectionData, docSnapshots } from '@angular/fire/firestore
 import { collection, doc, endAt, getCountFromServer, orderBy, query, startAt, where } from 'firebase/firestore';
 import { MB_RECORDS, USERS } from '../models/constants';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { User } from '../models/user';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-mb-movement-register',
@@ -28,7 +29,9 @@ export class MbMovementRegisterPage implements OnInit {
     searchFormControl: new FormControl('')
   });
 
-  constructor(private activatedRoute: ActivatedRoute) {
+  constructor(private activatedRoute: ActivatedRoute,
+    private navController: NavController,
+    private router: Router) {
 
     this.activatedRoute.params.subscribe(params => {
       // this._uid = params['uid'];
@@ -116,6 +119,11 @@ export class MbMovementRegisterPage implements OnInit {
       const recordsCount = snapShot.data().count;
       this.$recordCount.next(recordsCount);
     });
+  }
+
+  navigateToCreate() {
+    this.navController.navigateForward(['main', 'mb-movement-register', 'create', 'mb']);
+    console.log('navigate to create MB..', this.router.routerState.snapshot.url);
   }
 
 }

@@ -17,8 +17,7 @@
 
   <ion-list>
     <ion-item button detail="true" detail-icon="caret-forward"
-    (click)="navigateToOfficeOrMbRegister()"
-      [routerLink]=" associatedOffice && associatedOffice.subOffices && associatedOffice.subOffices.length > 0 ? ['/main/pwd-offices/office', associatedOffice.id] : ['/main/agreement-register/office', associatedOffice?.id]">
+    (click)="navigateToOfficeOrMbRegister()">
       <ion-thumbnail slot="start">
         <img [src]="loggedInUser?.photoUrl" [alt]="loggedInUser?.name">
       </ion-thumbnail>

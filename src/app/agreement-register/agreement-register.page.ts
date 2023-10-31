@@ -5,7 +5,7 @@ import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/pag
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
-import { DocumentReference, collection, doc, endAt, endBefore, getCountFromServer, getDoc, limit, limitToLast, orderBy, query, startAfter, startAt, where } from 'firebase/firestore';
+import { DocumentReference, and, collection, doc, endAt, endBefore, getCountFromServer, getDoc, limit, limitToLast, or, orderBy, query, startAfter, startAt, where } from 'firebase/firestore';
 import { deleteDoc } from 'firebase/firestore/lite';
 import { Observable, Subject, of } from 'rxjs';
 import { Agency } from '../models/agency';
@@ -80,13 +80,19 @@ export class AgreementRegisterPage implements OnInit {
     },
   ];
 
+  isRenderedInMobile: boolean = false;
+  isDarkThemeEnabled: boolean = false;
+
   constructor(private toastController: ToastController,
     private alertController: AlertController,
     private activatedRoute: ActivatedRoute,
     private matPaginatorIntl: MatPaginatorIntl,
-    private appComponentService: AppComponentService) {
+    public appComponentService: AppComponentService) {
 
-
+    this.isRenderedInMobile = this.appComponentService.isRenderedInMobile;
+    this.appComponentService.isDarkThemeEnabled.subscribe(theme => {
+      this.isDarkThemeEnabled = theme;
+    });
 
   }
 
@@ -143,7 +149,7 @@ export class AgreementRegisterPage implements OnInit {
 
   async loadAgtRegisterCollection(currentPageIndex?: number, isNext?: boolean) {
     // this.paginator?.firstPage();
-    this.isLoading =  true;
+    this.isLoading = true;
     this.isDisabled = true;
 
     const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
@@ -163,7 +169,7 @@ export class AgreementRegisterPage implements OnInit {
 
     if (this.searchString) {
       console.log(this.searchString);
-      q = query(q, orderBy('agreementNumber'), startAt(this.searchString), endAt(this.searchString + '~'))
+      q = query(q, where('agreementNumber', '>=', this.searchString), where('agreementNumber', '<=', this.searchString + '\uf8ff'));
     }
 
     getCountFromServer(q).then(snapShot => {

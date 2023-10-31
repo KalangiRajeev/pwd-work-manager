@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Auth, GoogleAuthProvider, UserCredential, signInWithPopup } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { AgreementRegister } from 'src/app/models/agreement-register';
 import { Office } from 'src/app/models/office';
 import { User } from 'src/app/models/user';
@@ -10,6 +10,9 @@ import { User } from 'src/app/models/user';
   providedIn: 'root'
 })
 export class AppComponentService {
+
+  isRenderedInMobile: boolean = false;
+  isDarkThemeEnabled: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   firestore: Firestore = inject(Firestore);
   _auth: Auth = inject(Auth);

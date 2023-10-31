@@ -11,6 +11,7 @@ import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginato
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
+import {LayoutModule} from '@angular/cdk/layout';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatIconModule,
     MatChipsModule,
     MatPaginatorModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    LayoutModule
   ],
   providers: [
     MatPaginatorIntl

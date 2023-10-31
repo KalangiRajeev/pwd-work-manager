@@ -7,16 +7,16 @@ import { DetailsMbRecordComponent } from './details-mb-record/details-mb-record.
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':officeId',
     component: MbMovementRegisterPage
-  },
-  {
-    path: 'create',
-    component: FormMbEntryComponent
   },
   {
     path: 'details/:mbId',
     component: DetailsMbRecordComponent
+  },
+  {
+    path: 'create/mb',
+    component: FormMbEntryComponent
   },
   {
     path: 'edit/:id',

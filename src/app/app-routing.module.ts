@@ -30,14 +30,6 @@ const routes: Routes = [
         loadChildren: () => import('./folder/folder.module').then(m => m.FolderPageModule),
       },
       {
-        path: 'folder/office/:uid',
-        loadChildren: () => import('./folder/folder.module').then(m => m.FolderPageModule),
-      },
-      {
-        path: 'folder/mb-register/:uid',
-        loadChildren: () => import('./folder/folder.module').then(m => m.FolderPageModule),
-      },
-      {
         path: 'agreement-register',
         loadChildren: () => import('./agreement-register/agreement-register.module').then(m => m.AgreementRegisterPageModule),
       },
@@ -50,19 +42,11 @@ const routes: Routes = [
         loadChildren: () => import('./pwd-offices/pwd-offices.module').then(m => m.PwdOfficesPageModule),
       },
       {
-        path: 'mb-movement-register/:officeId',
+        path: 'mb-movement-register',
         loadChildren: () => import('./mb-movement-register/mb-movement-register.module').then(m => m.MbMovementRegisterPageModule),
       },
       {
         path: 'pwd-offices',
-        loadChildren: () => import('./pwd-offices/pwd-offices.module').then(m => m.PwdOfficesPageModule),
-      },
-      {
-        path: 'pwd-offices/office/:officeId',
-        loadChildren: () => import('./pwd-offices/pwd-offices.module').then(m => m.PwdOfficesPageModule),
-      },
-      {
-        path: 'pwd-offices/mb-register/:officeId',
         loadChildren: () => import('./pwd-offices/pwd-offices.module').then(m => m.PwdOfficesPageModule),
       },
       {

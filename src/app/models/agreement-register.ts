@@ -25,9 +25,9 @@ export enum TenderQuote {
 }
 
 export enum WorkStatus {
-    NOT_YET_STARTED = 'Not yet started',
     PENDING = 'Pending',
     IN_PROGRESS= 'In-Progress',
+    NOT_YET_STARTED = 'Not yet started',
     COMPLETED = 'Completed',
 }
 

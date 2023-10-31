@@ -1,8 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button *ngIf="title; else menuButton" icon="chevron-back"
-        defaultHref="/main/agreement-register"></ion-back-button>
+      <ion-back-button *ngIf="title; else menuButton" icon="chevron-back" defaultHref="/main/agreement-register"></ion-back-button>
       <ng-template #menuButton>
         <ion-menu-button></ion-menu-button>
       </ng-template>
@@ -34,7 +33,7 @@
 
   <mat-tab-group backgroundColor="primary" (selectedTabChange)="matTabSelectedChange($event)" animationDuration="150ms">
     <mat-tab *ngFor="let tabtitle of workStatuses" class="tab-title" [label]="tabtitle">
-      <ion-list>
+      <ion-list *ngIf = "isRenderedInMobile; else renderInLargeScreen">
         <ion-item-sliding *ngFor="let agtReg of agreementRegister$ | async; let i = index">
           <ion-item-options side="end">
             <ion-item-option color="danger">
@@ -58,6 +57,35 @@
           </ion-item>
         </ion-item-sliding>
       </ion-list>
+
+      <ng-template #renderInLargeScreen>
+        <table class="table table-hover" [ngClass]="isDarkThemeEnabled ? 'table-dark': 'table-light'">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name of Work</th>
+              <!-- <th scope="col">Admin Sanction Ref</th> -->
+              <th scope="col">Agreement Ref</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Agency</th>
+              <th scope="col">Date of Completion</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let agtReg of agreementRegister$ | async; let i = index" [routerLink]="['/main/agreement-register/details/', agtReg.id]">
+              <td>{{(pageIndex*pageSize)+(i+1)}}</td>
+              <td>{{agtReg.nameOfWork}}</td>
+              <!-- <th scope="col">{{agtReg.administrativeSanctionReference}}</th> -->
+              <td>{{agtReg.agreementNumber}} Dt: {{agtReg.dateOfAgreement | date}}, conluded @ {{agtReg.office.name}}</td>
+              <td>{{agtReg.estimateContractValue | currency:'INR':true}}</td>
+              <td>{{agtReg.agency.name}}, {{agtReg.agency.address}}</td>
+              <td>{{agtReg.dueDateOfCompletion | date}}</td>
+              <td><mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}</mat-chip></td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </ion-content>

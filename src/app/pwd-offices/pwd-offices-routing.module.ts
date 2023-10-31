@@ -10,6 +10,14 @@ const routes: Routes = [
     component: PwdOfficesPage
   },
   {
+    path: 'office/:officeId',
+    component: PwdOfficesPage
+  },
+  {
+    path: 'mb-register/:officeId',
+    component: PwdOfficesPage
+  },
+  {
     path: 'create',
     component: FormPwdOfficesComponent
   },

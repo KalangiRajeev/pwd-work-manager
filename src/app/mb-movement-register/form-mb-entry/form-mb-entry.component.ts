@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Firestore, collectionData, docSnapshots } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, NavController, ToastController } from '@ionic/angular';
 import { addDoc, collection, doc, query, setDoc, where } from 'firebase/firestore';
 import { Observable, Subject, map, startWith } from 'rxjs';
@@ -41,7 +41,8 @@ export class FormMbEntryComponent implements OnInit {
   constructor(private alertController: AlertController,
     private toastController: ToastController,
     private navController: NavController,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {
     const collectionDataOffices = collection(this.firestore, OFFICES);
     
@@ -65,6 +66,8 @@ export class FormMbEntryComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.router.routerState.snapshot.url);
+
     this.mbFormGroup.get('issuedToOffice')?.valueChanges.subscribe(value => {
       this.selectedOffice = value;
     });
@@ -124,11 +127,6 @@ export class FormMbEntryComponent implements OnInit {
           })
           .then(toast => {
             toast.present();
-            if (this.mbRecordId) {
-              this.navController.navigateBack(`/main/mb-movement-register/details/${this.mbRecordId}`)
-            } else {
-              this.navController.navigateBack('/main/mb-movement-register');
-            }
           })
           .catch(error => {
             console.log(error);
@@ -154,6 +152,11 @@ export class FormMbEntryComponent implements OnInit {
           });
       }
 
+      if (this.mbRecordId) {
+        this.navController.navigateBack(`/main/mb-movement-register/details/${this.mbRecordId}`)
+      } else {
+        this.navController.navigateBack('/main/mb-movement-register');
+      }
 
     } else {
       const alert = await this.alertController.create({

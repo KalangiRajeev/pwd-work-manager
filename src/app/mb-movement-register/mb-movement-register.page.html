@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button icon="chevron-back" defaultHref="/main/mb-movement-register"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button>
@@ -26,7 +26,7 @@
   </ion-header>
 
   <ion-fab class="ion-fab" slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button routerLink="/main/mb-movement-register/create">
+    <ion-fab-button (click)="navigateToCreate()">
       <ion-icon name="create-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>

@@ -7,6 +7,14 @@ const routes: Routes = [
   {
     path: '',
     component: FolderPage
+  },
+  {
+    path: 'office/:uid',
+    component: FolderPage,
+  },
+  {
+    path: 'mb-register/:uid',
+    component: FolderPage
   }
 ];
 
