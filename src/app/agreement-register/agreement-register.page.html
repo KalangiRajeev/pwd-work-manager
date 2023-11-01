@@ -47,10 +47,13 @@
             <ion-label class="ion-text-wrap">
               <div class="flex-inline">
                 <div>
-                  <b>({{(pageIndex*pageSize)+(i+1)}}) Agt No.{{agtReg.agreementNumber}}</b>
+                  <p>({{(pageIndex*pageSize)+(i+1)}}) Agt No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement | date: 'dd/MM/yyyy'}}</p>
                   <p>Agency: {{agtReg.agency.name}}</p>
                 </div>
-                <mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}</mat-chip>
+                <div class="text-end">
+                  <p class="text-end">{{agtReg.estimateContractValue | currency: 'INR'}}</p>
+                  <mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}</mat-chip>
+                </div>
               </div>
               <p ngClass="text">{{agtReg.nameOfWork}}</p>
             </ion-label>
@@ -58,33 +61,36 @@
         </ion-item-sliding>
       </ion-list>
 
-      <ng-template #renderInLargeScreen>
-        <table class="table table-hover" [ngClass]="isDarkThemeEnabled ? 'table-dark': 'table-light'">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Name of Work</th>
-              <!-- <th scope="col">Admin Sanction Ref</th> -->
-              <th scope="col">Agreement Ref</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Agency</th>
-              <th scope="col">Date of Completion</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let agtReg of agreementRegister$ | async; let i = index" [routerLink]="['/main/agreement-register/details/', agtReg.id]">
-              <td>{{(pageIndex*pageSize)+(i+1)}}</td>
-              <td>{{agtReg.nameOfWork}}</td>
-              <!-- <th scope="col">{{agtReg.administrativeSanctionReference}}</th> -->
-              <td>{{agtReg.agreementNumber}} Dt: {{agtReg.dateOfAgreement | date}}, conluded @ {{agtReg.office.name}}</td>
-              <td>{{agtReg.estimateContractValue | currency:'INR':true}}</td>
-              <td>{{agtReg.agency.name}}, {{agtReg.agency.address}}</td>
-              <td>{{agtReg.dueDateOfCompletion | date}}</td>
-              <td><mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}</mat-chip></td>
-            </tr>
-          </tbody>
-        </table>
+      <ng-template #renderInLargeScreen >
+        <div id="htmlData">
+          <table class="table table-hover" [ngClass]="isDarkThemeEnabled ? 'table-dark': 'table-light'">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name of Work</th>
+                <!-- <th scope="col">Admin Sanction Ref</th> -->
+                <th scope="col">Agreement Ref</th>
+                <th scope="col">Amount</th>
+                <th scope="col">DOC</th>
+                <th scope="col">Agency</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let agtReg of agreementRegister$ | async; let i = index" [routerLink]="['/main/agreement-register/details/', agtReg.id]">
+                <td>{{(pageIndex*pageSize)+(i+1)}}</td>
+                <td>{{agtReg.nameOfWork}}</td>
+                <!-- <th scope="col">{{agtReg.administrativeSanctionReference}}</th> -->
+                <td>Agt. No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement | date: 'dd/MM/yyy'}}, concluded @ {{agtReg.office.name}}</td>
+                <td>{{agtReg.estimateContractValue | currency:'INR'}}</td>
+                <td>{{agtReg.dueDateOfCompletion | date: 'dd/MM/yyyy'}}</td>
+                <td>{{agtReg.agency.name}}, {{agtReg.agency.address}}</td>
+                <td><mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}</mat-chip></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ion-button (click)="exportAsPDF()" *ngIf="agreementRegister$"><mat-icon>picture_as_pdf</mat-icon>Export as PDF</ion-button>
       </ng-template>
     </mat-tab>
   </mat-tab-group>

@@ -14,12 +14,14 @@
     </ion-toolbar>
   </ion-header>
 
+  <mat-progress-bar mode="indeterminate" color="accent" *ngIf="isLoading"></mat-progress-bar>
 
-  <ion-list>
+
+  <ion-list *ngIf="loggedInUser">
     <ion-item button detail="true" detail-icon="caret-forward"
     (click)="navigateToOfficeOrMbRegister()">
       <ion-thumbnail slot="start">
-        <img [src]="loggedInUser?.photoUrl" [alt]="loggedInUser?.name">
+        <img [src]="loggedInUser?.photoUrl" [alt]="loggedInUser?.name ? loggedInUser?.name : '...'">
       </ion-thumbnail>
       <ion-label class="ion-text-wrap">
         <b>{{associatedOffice?.name}}<br>{{loggedInUser?.name}}</b>

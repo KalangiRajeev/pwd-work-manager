@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
         sessionStorage.setItem('uid', user.uid);
         this.saveUpdateUser(user)
           .then(user => {
-            const agtRefDoc = doc(this.firestore, USERS, user.uid);
+            this.appComponentService.$loggedInUser.next(user);
             this.navController.navigateForward(['main', 'folder', 'office', sessionStorage.getItem('uid')]);
           });
       }
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
 
   async saveUpdateUser(user: User): Promise<User> {
     const agtRefDoc = doc(this.firestore, USERS, user.uid);
-    const docSnap = await getDoc(agtRefDoc); 
+    const docSnap = await getDoc(agtRefDoc);
     if (docSnap.data()) {
       this.existingUser = docSnap.data() as User;
       this.existingUser.uid = docSnap.id;
@@ -58,5 +58,5 @@ export class LoginComponent implements OnInit {
     setDoc(agtRefDoc, user);
     return user;
   }
-  
+
 }

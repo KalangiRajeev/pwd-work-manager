@@ -17,6 +17,8 @@ import { NavController } from '@ionic/angular';
 })
 export class MbMovementRegisterPage implements OnInit {
 
+  isLoading: boolean = false;
+
   firestore: Firestore = inject(Firestore);
   searchString: string = '';
   $mbRegister?: Observable<MbRecord[]>;
@@ -33,43 +35,11 @@ export class MbMovementRegisterPage implements OnInit {
     private navController: NavController,
     private router: Router) {
 
-    this.activatedRoute.params.subscribe(params => {
-      // this._uid = params['uid'];
-
-      this._officeId = params['officeId'];
-      
-      // if (this._uid) {
-      //   const usersRefDoc = doc(this.firestore, `${USERS}/${this._uid}`);
-      //   docSnapshots(usersRefDoc).subscribe(docSnap => {
-      //     this.existingUser = docSnap.data() as User;
-      //     this.existingUser.uid = docSnap.id;
-      //     console.log(this.existingUser);
-      //     const mbRecords = collection(this.firestore, MB_RECORDS);
-      //     const q = query(mbRecords, where('issuedToOffice.id', '==', this.existingUser.associatedOffice?.id), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-      //     this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
-      //     getCountFromServer(q).then(snapShot => {
-      //       const recordsCount = snapShot.data().count;
-      //       this.$recordCount.next(recordsCount);
-      //     });
-      //   });
-      // } else 
-
-      if (this._officeId) {
-        const mbRecords = collection(this.firestore, MB_RECORDS);
-        const q = query(mbRecords, where('issuedToOffice.id', '==', this._officeId), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
-        this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
-        getCountFromServer(q).then(snapShot => {
-          const recordsCount = snapShot.data().count;
-          this.$recordCount.next(recordsCount);
-        });
-      } 
-      
-    });
-
   }
 
   ngOnInit() {
     this.searchFormGroup.get('searchFormControl')?.valueChanges.subscribe(searchString => {
+      this.isLoading = true;
       this.searchString = searchString;
       const mbRecords = collection(this.firestore, MB_RECORDS);
       const q = query(mbRecords, where('issuedToOffice.id', '==', this._officeId), orderBy('mbNumber'), startAt(searchString), endAt(searchString + '\uf8ff'));
@@ -77,8 +47,25 @@ export class MbMovementRegisterPage implements OnInit {
       getCountFromServer(q).then(snapShot => {
         const recordsCount = snapShot.data().count;
         this.$recordCount.next(recordsCount);
+        this.isLoading = false;
       });
     });
+
+    this.activatedRoute.params.subscribe(params => {
+      this.isLoading = true;
+      this._officeId = params['officeId'];
+      if (this._officeId) {
+        const mbRecords = collection(this.firestore, MB_RECORDS);
+        const q = query(mbRecords, where('issuedToOffice.id', '==', this._officeId), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
+        getCountFromServer(q).then(snapShot => {
+          const recordsCount = snapShot.data().count;
+          this.$recordCount.next(recordsCount);
+          this.isLoading = false;
+        });
+      }
+    });
+
   }
 
   getKeyByValue(value: string): string {

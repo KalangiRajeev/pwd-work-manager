@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Firestore, collectionData, docSnapshots } from '@angular/fire/firestore';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { collection, doc, getCountFromServer, query } from 'firebase/firestore';
+import { collection, doc, getCountFromServer, orderBy, query } from 'firebase/firestore';
 import { Observable, Subject } from 'rxjs';
 import { Agency } from 'src/app/models/agency';
 import { AgreementRegister } from 'src/app/models/agreement-register';
@@ -39,10 +39,8 @@ export class DetailsAgtRegisterComponent implements OnInit {
 
   constructor(private activitedRoute: ActivatedRoute,
     private navController: NavController,
-    private appComponentService: AppComponentService) {
+    public appComponentService: AppComponentService) {
 
-    this.agreementRegister = this.appComponentService.selectedAgreementRegister;
-    console.log(this.agreementRegister);
     this.isLoading = true;
 
     this.activitedRoute.params.subscribe(paramMap => {
@@ -68,7 +66,7 @@ export class DetailsAgtRegisterComponent implements OnInit {
         });
 
         const supplAgtsCollection = collection(this.firestore, `${AGREEMENT_REGISTER}/${this.agtRegId}/${SUPPL_AGT_DETAILS}`);
-        const qs = query(supplAgtsCollection);
+        const qs = query(supplAgtsCollection, orderBy('dateOfSupplAgt', 'desc'));
         this.$supplAgtDetails = collectionData(qs, { idField: 'id' }) as Observable<SupplAgtDetails[]>;
         getCountFromServer(qs).then(snapShot => {
           this.$supplAgtCount.next(snapShot.data().count);
@@ -76,7 +74,7 @@ export class DetailsAgtRegisterComponent implements OnInit {
         });
 
         const msmtsCollection = collection(this.firestore, `${AGREEMENT_REGISTER}/${this.agtRegId}/${MEASUREMENTS}`);
-        const qm = query(msmtsCollection);
+        const qm = query(msmtsCollection, orderBy('dateOfMeasurement', 'desc'));
         this.$measurements = collectionData(qm, { idField: 'id' }) as Observable<Measurement[]>;
         getCountFromServer(qm).then(snapShot => {
           this.$msmtsCount.next(snapShot.data().count);
@@ -84,7 +82,7 @@ export class DetailsAgtRegisterComponent implements OnInit {
         });
 
         const billsCollection = collection(this.firestore, `${AGREEMENT_REGISTER}/${this.agtRegId}/${BILLS}`);
-        const qb = query(billsCollection);
+        const qb = query(billsCollection, orderBy('dateOfRecommendation', 'desc'));
         this.$bills = collectionData(qb, { idField: 'id' }) as Observable<Bill[]>;
         getCountFromServer(qb).then(snapShot => {
           this.$billsCount.next(snapShot.data().count);
@@ -96,7 +94,7 @@ export class DetailsAgtRegisterComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    console.log(this.appComponentService.loggedInUser);
   }
 
 

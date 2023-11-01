@@ -19,6 +19,7 @@ const routes: Routes = [
   {
     path: 'main',
     component: MainComponent,
+    canActivate: [AuthGuardUserService],
     children: [
       {
         path: '',

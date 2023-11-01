@@ -16,6 +16,9 @@ import { AlertController, NavController } from '@ionic/angular';
   styleUrls: ['./folder.page.scss'],
 })
 export class FolderPage implements OnInit {
+
+  isLoading: boolean = false;
+
   firestore: Firestore = inject(Firestore);
   $offices?: Observable<Office[]>;
   searchString: string = '';
@@ -23,7 +26,7 @@ export class FolderPage implements OnInit {
   associatedOffice?: Office;
 
   loggedInUser?: User;
-  _title? : string;
+  _title?: string;
 
   constructor(private appComponentService: AppComponentService,
     private alertController: AlertController,
@@ -33,12 +36,27 @@ export class FolderPage implements OnInit {
 
     this.loggedInUser = this.appComponentService._user;
 
+    const url = this.router.routerState.snapshot.url;
+    if (url.includes('/mb-register')) {
+      this._title = 'MB Register'
+    } else {
+      this._title = 'Works Register'
+    }
+
+  }
+
+  ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
+
+      this.isLoading = true;
 
       const documentRef = doc(this.firestore, `${USERS}/${params['uid']}`);
       docSnapshots(documentRef).subscribe(docSnap => {
         this.loggedInUser = docSnap.data() as User;
         this.loggedInUser.id = docSnap.id;
+        
+        this.isLoading =false;
+
         if (this.loggedInUser.associatedOffice) {
           this.associatedOffice = this.loggedInUser.associatedOffice;
           const docRef = doc(this.firestore, `${OFFICES}/${this.associatedOffice?.id}`);
@@ -50,19 +68,6 @@ export class FolderPage implements OnInit {
       });
 
     });
-
-    const url = this.router.routerState.snapshot.url;
-    if (url.includes('/mb-register')) {
-      this._title = 'MB Register'
-    } else {
-      this._title = 'Works Register'
-    }
-
-
-  }
-
-  ngOnInit() {
-
   }
 
   async showAlert() {
@@ -78,13 +83,13 @@ export class FolderPage implements OnInit {
   navigateToOfficeOrMbRegister() {
     const url = this.router.routerState.snapshot.url;
     if (url.includes('office')) {
-      if (this.associatedOffice && this.associatedOffice.subOffices && this.associatedOffice.subOffices.length > 0 ) {
+      if (this.associatedOffice && this.associatedOffice.subOffices && this.associatedOffice.subOffices.length > 0) {
         this.navController.navigateForward(['/main/pwd-offices/office', this.associatedOffice.id]);
       } else {
         this.navController.navigateForward(['/main/agreement-register/office', this.associatedOffice?.id]);
       }
     } else if (url.includes('mb-register')) {
-      if (this.associatedOffice && this.associatedOffice.subOffices && this.associatedOffice.subOffices.length > 0 ) {
+      if (this.associatedOffice && this.associatedOffice.subOffices && this.associatedOffice.subOffices.length > 0) {
         this.navController.navigateForward(['/main/pwd-offices/mb-register', this.associatedOffice.id]);
       } else {
         this.navController.navigateForward(['/main/mb-movement-register', this.associatedOffice?.id]);

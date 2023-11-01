@@ -25,6 +25,8 @@
     </ion-toolbar>
   </ion-header>
 
+  <mat-progress-bar mode="indeterminate" color="accent" *ngIf="isLoading"></mat-progress-bar>
+
   <ion-fab class="ion-fab" slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="navigateToCreate()">
       <ion-icon name="create-outline"></ion-icon>

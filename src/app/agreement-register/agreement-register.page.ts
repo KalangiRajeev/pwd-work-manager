@@ -1,13 +1,15 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
 import { Firestore, collectionData } from '@angular/fire/firestore';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
-import { DocumentReference, and, collection, doc, endAt, endBefore, getCountFromServer, getDoc, limit, limitToLast, or, orderBy, query, startAfter, startAt, where } from 'firebase/firestore';
+import { DocumentReference, collection, doc, endBefore, getCountFromServer, getDoc, limit, limitToLast, orderBy, query, startAfter, where } from 'firebase/firestore';
 import { deleteDoc } from 'firebase/firestore/lite';
-import { Observable, Subject, of } from 'rxjs';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { Observable, Subject } from 'rxjs';
 import { Agency } from '../models/agency';
 import { AgreementRegister, Colors, WorkStatus } from '../models/agreement-register';
 import { AGREEMENT_REGISTER } from '../models/constants';
@@ -24,6 +26,7 @@ import { AppComponentService } from '../services/app-component-service/app-compo
 export class AgreementRegisterPage implements OnInit {
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+  @ViewChild('htmlData') htmlData!: ElementRef;
 
   isLoading: boolean = false;
   isDisabled: boolean = false;
@@ -87,7 +90,8 @@ export class AgreementRegisterPage implements OnInit {
     private alertController: AlertController,
     private activatedRoute: ActivatedRoute,
     private matPaginatorIntl: MatPaginatorIntl,
-    public appComponentService: AppComponentService) {
+    public appComponentService: AppComponentService,
+  ) {
 
     this.isRenderedInMobile = this.appComponentService.isRenderedInMobile;
     this.appComponentService.isDarkThemeEnabled.subscribe(theme => {
@@ -191,8 +195,11 @@ export class AgreementRegisterPage implements OnInit {
       }
       this.appComponentService.agtRegPageIndex = currentPageIndex;
 
-    } else {
+    } else if (this.searchString) {
       q = query(q, limit(this.pageSize));
+    } else {
+      q = query(q, orderBy('dateOfAgreement', 'desc'), limit(this.pageSize));
+
     }
 
     this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
@@ -281,4 +288,24 @@ export class AgreementRegisterPage implements OnInit {
     this.appComponentService.selectedAgreementRegister = agtReg;
   }
 
+  exportAsPDF() {
+    const data = document.getElementById('htmlData');
+    html2canvas(data!).then((canvas: any) => {
+      const imgWidth = 208;
+      const pageHeight = 295;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+      heightLeft -= pageHeight;
+      const doc = new jsPDF('p', 'mm');
+      doc.addImage(canvas, 'PNG', 0, position, imgWidth, imgHeight, '', 'FAST');
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        doc.addPage();
+        doc.addImage(canvas, 'PNG', 0, position, imgWidth, imgHeight, '', 'FAST');
+        heightLeft -= pageHeight;
+      }
+      doc.save(new Date() + '.pdf');
+    });
+  }
 }
