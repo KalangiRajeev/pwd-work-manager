@@ -3,7 +3,7 @@ import { Firestore, collectionData, docSnapshots } from '@angular/fire/firestore
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { collectionGroup, doc, getCountFromServer, query, where } from 'firebase/firestore';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Bill } from 'src/app/models/bill';
 import { BILLS, MB_RECORDS, MEASUREMENTS } from 'src/app/models/constants';
 import { MbRecord } from 'src/app/models/mbrecord';
@@ -15,6 +15,8 @@ import { Measurement } from 'src/app/models/mesaurement';
   styleUrls: ['./details-mb-record.component.scss'],
 })
 export class DetailsMbRecordComponent implements OnInit {
+
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   firestore: Firestore = inject(Firestore)
 
@@ -31,6 +33,7 @@ export class DetailsMbRecordComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute, private navController: NavController) {
     this.activatedRoute.params.subscribe(params => {
       this.mbRecordId = params['mbId'];
+      this.isLoading$.next(true);
 
       const documentRef = doc(this.firestore, `${MB_RECORDS}/${params['mbId']}`);
         docSnapshots(documentRef).subscribe(docSnap => {
@@ -44,6 +47,7 @@ export class DetailsMbRecordComponent implements OnInit {
       getCountFromServer(qm).then(snapShot => {
         const recordsCount = snapShot.data().count;
         this.$msmtsCount.next(recordsCount);
+        this.isLoading$.next(false);
       });
 
       const billsCollection = collectionGroup(this.firestore, `${BILLS}`);
@@ -52,6 +56,7 @@ export class DetailsMbRecordComponent implements OnInit {
       getCountFromServer(qb).then(snapShot => {
         const recordsCount = snapShot.data().count;
         this.$billsCount.next(recordsCount);
+        this.isLoading$.next(false);
       });
 
     });

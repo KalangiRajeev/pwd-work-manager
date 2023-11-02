@@ -162,7 +162,7 @@ export class AddBillComponent  implements OnInit {
         setDoc(msmtDocRef, bill)
           .then(() => {
             const toast = this.toastController.create({
-              message: `Updated Measurements!`,
+              message: `Updated Bill!`,
               duration: 1500,
               position: 'bottom',
             });
@@ -180,7 +180,7 @@ export class AddBillComponent  implements OnInit {
         addDoc(collectionAgreementRegister, bill)
           .then(msmt => {
             const toast = this.toastController.create({
-              message: `Saved Measurements!`,
+              message: `Saved Bill!`,
               duration: 1500,
               position: 'bottom',
             });
@@ -202,7 +202,7 @@ export class AddBillComponent  implements OnInit {
     } else {
       const alert = await this.alertController.create({
         header: 'Alert!',
-        subHeader: 'Measurement Details Form',
+        subHeader: 'Bill Details Form',
         message: 'This is not an valid form!',
         buttons: ['OK'],
       });

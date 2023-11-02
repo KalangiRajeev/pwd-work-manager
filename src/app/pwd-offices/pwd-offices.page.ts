@@ -36,7 +36,8 @@ export class PwdOfficesPage implements OnInit {
 
   constructor(private activatedRoute: ActivatedRoute,
     private navController: NavController,
-    private router: Router) {
+    private router: Router,
+    public appComponentService: AppComponentService) {
 
     this.activatedRoute.params.subscribe(params => {
       this.officeId = params['officeId'];

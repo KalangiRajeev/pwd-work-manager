@@ -23,10 +23,10 @@
 
       <mat-form-field class="date">
         <mat-label>Date of Agreement</mat-label>
-        <input matInput [matDatepicker]="picker2" [formControl]="dateOfAgreement">
+        <input matInput [matDatepicker]="picker" [formControl]="dateOfAgreement">
         <mat-hint>DD/MM/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-        <mat-datepicker #picker2></mat-datepicker>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
 
 
@@ -53,6 +53,14 @@
         <mat-hint>DD/MM/YYYY</mat-hint>
         <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
         <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>EOT Date</mat-label>
+        <input matInput [matDatepicker]="picker2" [formControl]="eotDate">
+        <mat-hint>DD/MM/YYYY</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field class="example-full-width">
@@ -90,13 +98,19 @@
         </mat-select>
       </mat-form-field>
 
-      <ion-input formControlName="technicalSanctionReference" class="input-fields"
-        label="Technical Sanction/Approval Reference" label-placement="floating" fill="outline"
-        placeholder="Enter text"></ion-input>
 
-      <ion-input formControlName="administrativeSanctionReference" class="input-fields"
-        label="Administrative Sanction Reference" label-placement="floating" fill="outline"
-        placeholder="Enter text"></ion-input>
+      <ion-textarea formControlName="technicalSanctionReference" class="input-fields"
+        label="Technical Sanction/Approval Reference" label-placement="floating" fill="outline" placeholder="Enter text"
+        autoGrow="true"></ion-textarea>
+
+
+      <ion-textarea formControlName="administrativeSanctionReference" class="input-fields"
+        label="Administrative Sanction Reference" label-placement="floating" fill="outline" placeholder="Enter text"
+        autoGrow="true"></ion-textarea>
+
+      <ion-textarea formControlName="remarks" class="input-fields" label="Remarks" label-placement="floating"
+        fill="outline" placeholder="Enter text" autoGrow="true"></ion-textarea>
+
     </form>
 
     <div class="ion-buttons">

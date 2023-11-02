@@ -3,8 +3,8 @@
     <ion-menu contentId="main-content" type="push">
       <ion-content>
         <ion-list id="inbox-list">
-          <ion-list-header>pwd-work-manager@gmail.com</ion-list-header>
-          <ion-list-header>Work Manager</ion-list-header>
+          <ion-list-header>{{appComponentService.loggedInUser?.associatedOffice?.name}}</ion-list-header>
+          <!-- <ion-list-header>{{appComponentService.loggedInUser?.email}}</ion-list-header> -->
 
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
             <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false"
@@ -16,7 +16,7 @@
 
         </ion-list>
 
-        <ion-list id="admin-options">
+        <ion-list id="admin-options" *ngIf="appComponentService.loggedInUser?.role === 'Admin'">
           <ion-list-header>Admin Options</ion-list-header>
 
           <ion-menu-toggle auto-hide="false" *ngFor="let p of adminPages; let i = index">

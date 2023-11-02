@@ -31,6 +31,8 @@ export class MbMovementRegisterPage implements OnInit {
     searchFormControl: new FormControl('')
   });
 
+  title?: string;
+
   constructor(private activatedRoute: ActivatedRoute,
     private navController: NavController,
     private router: Router) {
@@ -56,7 +58,7 @@ export class MbMovementRegisterPage implements OnInit {
       this._officeId = params['officeId'];
       if (this._officeId) {
         const mbRecords = collection(this.firestore, MB_RECORDS);
-        const q = query(mbRecords, where('issuedToOffice.id', '==', this._officeId), orderBy('mbNumber'), startAt(this.searchString), endAt(this.searchString + '\uf8ff'));
+        const q = query(mbRecords, where('issuedToOffice.id', '==', this._officeId), orderBy('issuedOn', 'desc'));
         this.$mbRegister = collectionData(q, { idField: 'id' }) as Observable<MbRecord[]>;
         getCountFromServer(q).then(snapShot => {
           const recordsCount = snapShot.data().count;

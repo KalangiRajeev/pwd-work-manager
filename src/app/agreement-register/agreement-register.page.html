@@ -29,7 +29,7 @@
     </ion-fab-button>
   </ion-fab>
 
-  <mat-progress-bar mode="indeterminate" color="accent" *ngIf="isLoading"></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" color="accent" *ngIf="isLoading$ | async"></mat-progress-bar>
 
   <mat-tab-group backgroundColor="primary" (selectedTabChange)="matTabSelectedChange($event)" animationDuration="150ms">
     <mat-tab *ngFor="let tabtitle of workStatuses" class="tab-title" [label]="tabtitle">
@@ -68,24 +68,24 @@
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name of Work</th>
-                <!-- <th scope="col">Admin Sanction Ref</th> -->
                 <th scope="col">Agreement Ref</th>
                 <th scope="col">Amount</th>
                 <th scope="col">DOC</th>
                 <th scope="col">Agency</th>
                 <th scope="col">Status</th>
+                <th scope="col">Remarks</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let agtReg of agreementRegister$ | async; let i = index" [routerLink]="['/main/agreement-register/details/', agtReg.id]">
                 <td>{{(pageIndex*pageSize)+(i+1)}}</td>
                 <td>{{agtReg.nameOfWork}}</td>
-                <!-- <th scope="col">{{agtReg.administrativeSanctionReference}}</th> -->
                 <td>Agt. No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement | date: 'dd/MM/yyy'}}, concluded @ {{agtReg.office.name}}</td>
                 <td>{{agtReg.estimateContractValue | currency:'INR'}}</td>
                 <td>{{agtReg.dueDateOfCompletion | date: 'dd/MM/yyyy'}}</td>
                 <td>{{agtReg.agency.name}}, {{agtReg.agency.address}}</td>
                 <td><mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}</mat-chip></td>
+                <td>{{agtReg.remarks}}</td>
               </tr>
             </tbody>
           </table>

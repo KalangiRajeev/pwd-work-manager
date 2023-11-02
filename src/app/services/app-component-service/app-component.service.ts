@@ -6,7 +6,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { AgreementRegister } from 'src/app/models/agreement-register';
 import { USERS } from 'src/app/models/constants';
 import { Office } from 'src/app/models/office';
-import { User } from 'src/app/models/user';
+import { Role, User } from 'src/app/models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -68,7 +68,7 @@ export class AppComponentService {
           email: userCredential.user.email!,
           emailVerified: userCredential.user.emailVerified,
           photoUrl: userCredential.user.photoURL!,
-          phone: userCredential.user.phoneNumber!
+          phone: userCredential.user.phoneNumber!, 
         }
         this.$loggedInUser.next(this._user);
         return this._user;

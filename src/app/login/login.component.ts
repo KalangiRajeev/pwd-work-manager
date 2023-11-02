@@ -1,10 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { Auth, GoogleAuthProvider, UserCredential, signInWithPopup } from '@angular/fire/auth';
-import { Firestore, docSnapshots } from '@angular/fire/firestore';
+import { Auth, UserCredential } from '@angular/fire/auth';
+import { Firestore } from '@angular/fire/firestore';
 import { NavController, ToastController } from '@ionic/angular';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { USERS } from '../models/constants';
-import { User } from '../models/user';
-import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
+import { Role, User } from '../models/user';
 import { AppComponentService } from '../services/app-component-service/app-component.service';
 
 
@@ -54,6 +54,11 @@ export class LoginComponent implements OnInit {
       this.existingUser = docSnap.data() as User;
       this.existingUser.uid = docSnap.id;
       user.associatedOffice = this.existingUser.associatedOffice;
+      if (this.existingUser.role === Role.ADMIN) {
+        user.role = Role.ADMIN;
+      } else {
+        user.role = Role.USER
+      }
     }
     setDoc(agtRefDoc, user);
     return user;

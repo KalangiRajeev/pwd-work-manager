@@ -5,6 +5,7 @@ import { Agency } from '../models/agency';
 import { FormControl, FormGroup } from '@angular/forms';
 import { collection, endAt, orderBy, query, startAt } from 'firebase/firestore';
 import { AGENCIES } from '../models/constants';
+import { AppComponentService } from '../services/app-component-service/app-component.service';
 
 @Component({
   selector: 'app-pwd-agencies',
@@ -23,7 +24,7 @@ export class PwdAgenciesPage implements OnInit {
     searchFormControl: new FormControl('')
   });
 
-  constructor() { 
+  constructor(public appComponentService: AppComponentService) { 
     const agenciesCollection = collection(this.firestore, AGENCIES);
     const q = query(agenciesCollection, orderBy('name'), startAt(this.searchString), endAt(this.searchString + '~'));
     this.$agencies = collectionData(q, { idField: 'id' }) as Observable<Agency[]>;

@@ -25,7 +25,7 @@ export class MainComponent  implements OnInit {
     { title: 'Users', url: '/main/users-list', icon: 'people'}
   ];
 
-  constructor(private appComponentService: AppComponentService, private navConroller: NavController) {
+  constructor(public appComponentService: AppComponentService, private navConroller: NavController) {
 
   }
 

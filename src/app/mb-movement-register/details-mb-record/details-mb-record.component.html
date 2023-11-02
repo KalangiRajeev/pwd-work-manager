@@ -19,9 +19,11 @@
     </ion-toolbar>
   </ion-header>
 
+  <mat-progress-bar mode="indeterminate" color="accent" *ngIf="isLoading$ | async"></mat-progress-bar>
+
   <ion-item>
     <ion-label *ngIf="mbRecord" slot="end">
-      Issued on {{mbRecord.issuedOn | date}}
+      Issued on {{mbRecord.issuedOn | date: 'dd/MM/yyyy'}}
     </ion-label>
   </ion-item>
 

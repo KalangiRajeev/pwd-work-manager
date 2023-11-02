@@ -16,6 +16,10 @@ export interface AgreementRegister {
     technicalSanctionReference: string,
     administrativeSanctionReference: string,
     workStatus: WorkStatus
+    modifiedOn: number,
+    modifiedBy: string,
+    extensionOfTime?: number,
+    remarks?: string 
 }
 
 export enum TenderQuote {

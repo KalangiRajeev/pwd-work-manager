@@ -22,7 +22,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-fab class="ion-fab" slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab class="ion-fab" slot="fixed" vertical="bottom" horizontal="end" *ngIf="appComponentService.loggedInUser?.role === 'Admin'">
     <ion-fab-button routerLink="/main/pwd-offices/create">
       <ion-icon name="create-outline"></ion-icon>
     </ion-fab-button>

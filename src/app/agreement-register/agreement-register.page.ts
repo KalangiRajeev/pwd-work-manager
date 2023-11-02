@@ -9,7 +9,7 @@ import { DocumentReference, collection, doc, endBefore, getCountFromServer, getD
 import { deleteDoc } from 'firebase/firestore/lite';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Agency } from '../models/agency';
 import { AgreementRegister, Colors, WorkStatus } from '../models/agreement-register';
 import { AGREEMENT_REGISTER } from '../models/constants';
@@ -28,7 +28,7 @@ export class AgreementRegisterPage implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
   @ViewChild('htmlData') htmlData!: ElementRef;
 
-  isLoading: boolean = false;
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   isDisabled: boolean = false;
 
   firestore: Firestore = inject(Firestore);
@@ -153,7 +153,7 @@ export class AgreementRegisterPage implements OnInit {
 
   async loadAgtRegisterCollection(currentPageIndex?: number, isNext?: boolean) {
     // this.paginator?.firstPage();
-    this.isLoading = true;
+    this.isLoading$.next(true);
     this.isDisabled = true;
 
     const agtRegCollection = collection(this.firestore, AGREEMENT_REGISTER);
@@ -206,7 +206,7 @@ export class AgreementRegisterPage implements OnInit {
     this.agreementRegister$?.subscribe(agtRegRec => {
       this.agtRecords = [...agtRegRec];
       this.appComponentService.currentAgtRegRecords = [...this.agtRecords];
-      this.isLoading = false;
+      this.isLoading$.next(false);
       this.isDisabled = false;
     });
   }

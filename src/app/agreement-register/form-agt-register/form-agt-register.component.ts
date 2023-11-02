@@ -42,6 +42,8 @@ export class FormAgtRegisterComponent implements OnInit {
 
   dueDateOfCompletion: FormControl = new FormControl(null, Validators.required);
   dateOfAgreement: FormControl = new FormControl(null, Validators.required);
+  eotDate: FormControl = new FormControl(null);
+
 
   agreementRegisterForm: FormGroup = new FormGroup({
     nameOfWork: new FormControl(null, Validators.required),
@@ -51,12 +53,14 @@ export class FormAgtRegisterComponent implements OnInit {
     tenderPercentage: new FormControl(null, Validators.required),
     tenderQuote: new FormControl(TenderQuote.LESS, Validators.required),
     dueDateOfCompletion: this.dueDateOfCompletion,
+    eotDate: this.eotDate,
     agencyFc: this.agencyFC,
     officeFc: this.officeFC,
     technicalSanctionReference: new FormControl(null, Validators.required),
     administrativeSanctionReference: new FormControl(null, Validators.required),
     associatedOffice: this.associatedOfficeFC,
-    workStatus: new FormControl(WorkStatus.NOT_YET_STARTED, Validators.required)
+    workStatus: new FormControl(WorkStatus.NOT_YET_STARTED, Validators.required),
+    remarks: new FormControl(null),
   });
 
   agreementRegister?: AgreementRegister;
@@ -124,7 +128,8 @@ export class FormAgtRegisterComponent implements OnInit {
         agencyFc: agreementRegister.agency,
         officeFc: agreementRegister.office,
         associatedOffice: agreementRegister.associatedOffice,
-        workStatus: agreementRegister.workStatus
+        workStatus: agreementRegister.workStatus,
+        remarks: agreementRegister.remarks
       });
 
       this.agencyFC.setValue(agreementRegister.agency);
@@ -132,6 +137,9 @@ export class FormAgtRegisterComponent implements OnInit {
       this.associatedOfficeFC.setValue(agreementRegister.associatedOffice);
       this.dueDateOfCompletion.setValue(new Date(agreementRegister.dueDateOfCompletion));
       this.dateOfAgreement.setValue(new Date(agreementRegister.dateOfAgreement));
+      if (agreementRegister.extensionOfTime) {
+        this.eotDate.setValue(new Date(agreementRegister.extensionOfTime).toISOString())
+      }
     });
 
 
@@ -181,12 +189,16 @@ export class FormAgtRegisterComponent implements OnInit {
         tenderPercentage: this.agreementRegisterForm.get('tenderPercentage')?.value,
         tenderQuote: this.agreementRegisterForm.get('tenderQuote')?.value,
         dueDateOfCompletion: new Date(this.agreementRegisterForm.get('dueDateOfCompletion')?.value).getTime(),
+        extensionOfTime: new Date(this.agreementRegisterForm.get('eotDate')?.value).getTime(),
         agency: this.agreementRegisterForm.get('agencyFc')?.value,
         office: this.agreementRegisterForm.get('officeFc')?.value,
         technicalSanctionReference: this.agreementRegisterForm.get('technicalSanctionReference')?.value,
         administrativeSanctionReference: this.agreementRegisterForm.get('administrativeSanctionReference')?.value,
         associatedOffice: this.agreementRegisterForm.get('associatedOffice')?.value,
-        workStatus: this.agreementRegisterForm.get('workStatus')?.value
+        workStatus: this.agreementRegisterForm.get('workStatus')?.value,
+        remarks: this.agreementRegisterForm.get('remarks')?.value,
+        modifiedOn: new Date().getTime(),
+        modifiedBy: this.appComponentService.loggedInUser?.email ?? '-'
       }
 
       console.log(agreementRegister);
