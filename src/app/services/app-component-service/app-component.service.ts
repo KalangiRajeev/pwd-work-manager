@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Auth, GoogleAuthProvider, UserCredential, signInWithPopup } from '@angular/fire/auth';
 import { Firestore, docSnapshots } from '@angular/fire/firestore';
@@ -35,7 +36,7 @@ export class AppComponentService {
   agtRegRecordsCount?: number;
   selectedAgreementRegister?: AgreementRegister;
 
-  constructor() {
+  constructor(private httpClient: HttpClient) {
     if (sessionStorage.getItem('user')) {
       this.uid = sessionStorage.getItem('user');
       console.log(this.uid);

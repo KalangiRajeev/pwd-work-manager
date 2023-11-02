@@ -7,6 +7,7 @@ import { DetailsAgtRegisterComponent } from './details-agt-register/details-agt-
 import { AddMeasurementsComponent } from './add-measurements/add-measurements.component';
 import { AddBillComponent } from './add-bill/add-bill.component';
 import { FormSupplAgtComponent } from './form-suppl-agt/form-suppl-agt.component';
+import { FormUploadDocsComponent } from './form-upload-docs/form-upload-docs.component';
 
 const routes: Routes = [
   {
@@ -56,6 +57,10 @@ const routes: Routes = [
   {
     path: ':agtRegId/suppl-agt/edit/:id',
     component: FormSupplAgtComponent
+  },
+  {
+    path: ':agtRegId/upload-docs',
+    component: FormUploadDocsComponent
   }
 ];
 

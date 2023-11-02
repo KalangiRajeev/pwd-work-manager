@@ -3,7 +3,7 @@ import { Auth } from '@angular/fire/auth';
 import { Firestore, collectionData, docSnapshots } from '@angular/fire/firestore';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NavController, ToastController } from '@ionic/angular';
+import { AlertController, NavController, ToastController } from '@ionic/angular';
 import { addDoc, collection, doc, query, setDoc, where } from 'firebase/firestore';
 import { Observable, Subject, map, startWith } from 'rxjs';
 import { Agency } from 'src/app/models/agency';
@@ -51,7 +51,8 @@ export class FormSupplAgtComponent  implements OnInit {
   
   constructor(private activatedRoute: ActivatedRoute,
     private toastController: ToastController,
-    private navController: NavController) { 
+    private navController: NavController,
+    private alertController: AlertController) { 
     
     const collectionDataAgencies = collection(this.firestore, AGENCIES);
     this.agencies$ = collectionData(collectionDataAgencies, { idField: 'id' }) as Observable<Agency[]>;
@@ -127,7 +128,7 @@ export class FormSupplAgtComponent  implements OnInit {
     return item && item.name ? item.name : '';
   }
 
-  saveSupplAgtDetails(){
+  async saveSupplAgtDetails(){
     if (this.saFormGroup.valid && this.agreementRegister) {
       const supplAgtDetails: SupplAgtDetails = {
         agtRegId: this.agreementRegister.id!,
@@ -177,10 +178,17 @@ export class FormSupplAgtComponent  implements OnInit {
             console.log(error);
           });
       }
+      
       this.navController.navigateBack(`/main/agreement-register/details/${this.agtRegId}`);
+    } else {
+      const alert = await this.alertController.create({
+        header: 'Alert!',
+        subHeader: 'Suppl Agt Details Form',
+        message: 'This is not an valid form!',
+        buttons: ['OK'],
+      });
+      await alert.present();
     }
-
-    
   }
 
 }

@@ -8,6 +8,7 @@ export const MEASUREMENTS = 'measurements';
 export const SUPPL_AGT_DETAILS = 'suppl-agt-details';
 export const BILLS = 'bills';
 export const USERS = 'users';
+export const STORAGE_UPLOADS = 'storage-uploads'
 
 export const getFinancialYears = () : FinancialYear[] => {
     const thisYear = (new Date()).getFullYear();

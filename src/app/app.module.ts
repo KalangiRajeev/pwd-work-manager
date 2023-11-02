@@ -23,6 +23,7 @@ import { UsersListComponent } from './users-list/users-list.component';
 import { UserOfficeComponent } from './users-list/user-office/user-office.component';
 import { AppComponentService } from './services/app-component-service/app-component.service';
 import { MainComponent } from './main/main.component';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { MainComponent } from './main/main.component';
     provideRemoteConfig(() => getRemoteConfig()), 
     provideStorage(() => getStorage()),
     BrowserAnimationsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, AppComponentService],
   bootstrap: [AppComponent],
