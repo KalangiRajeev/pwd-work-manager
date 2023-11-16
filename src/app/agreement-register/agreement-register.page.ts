@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator, MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, InfiniteScrollCustomEvent, ToastController } from '@ionic/angular';
 import { DocumentReference, collection, doc, endBefore, getCountFromServer, getDoc, limit, limitToLast, orderBy, query, startAfter, where } from 'firebase/firestore';
 import { deleteDoc } from 'firebase/firestore/lite';
 import html2canvas from 'html2canvas';
@@ -33,7 +33,7 @@ export class AgreementRegisterPage implements OnInit {
 
   firestore: Firestore = inject(Firestore);
   agreementRegister$?: Observable<AgreementRegister[]>;
-  agtRecords?: AgreementRegister[];
+  currentLoadedRecords: AgreementRegister[] = [];
 
   lastItem?: AgreementRegister;
   searchString?: string;
@@ -49,6 +49,7 @@ export class AgreementRegisterPage implements OnInit {
   // pageLimit: number = 2;
 
   recordsCount$: Subject<number> = new Subject();
+  totalRecords?: number;
   pageSize: number = 10;
   pageIndex: number = 0;
 
@@ -117,6 +118,13 @@ export class AgreementRegisterPage implements OnInit {
       this.loadAgtRegisterCollection();
     });
 
+    // this.agreementRegister$?.subscribe(agtRecords => {
+    //   const count = this.agtRecords.length + 1;
+    //   agtRecords.forEach(rec => {
+    //     this.agtRecords.push(rec);
+    //   });
+    // });
+
   }
 
   ionViewWillEnter() {
@@ -131,17 +139,17 @@ export class AgreementRegisterPage implements OnInit {
     if (this.appComponentService.agtRegRecordsCount) {
       this.recordsCount$.next(this.appComponentService.agtRegRecordsCount);
     }
-    if (this.appComponentService.currentAgtRegRecords) {
-      this.agtRecords = [...this.appComponentService.currentAgtRegRecords];
-      console.log(this.agtRecords);
+    if (this.appComponentService.currentLoadedAgtRecords) {
+      this.currentLoadedRecords = [...this.appComponentService.currentLoadedAgtRecords];
+      console.log(this.currentLoadedRecords);
       this.agreementRegister$ = new Observable(sub => {
-        sub.next(this.agtRecords);
+        sub.next(this.currentLoadedRecords);
       })
     }
   }
 
   ngOnDestroy() {
-    this.appComponentService.currentAgtRegRecords = undefined
+    this.appComponentService.currentLoadedAgtRecords = undefined
   }
 
   matTabSelectedChange(changeEvent: MatTabChangeEvent) {
@@ -178,20 +186,18 @@ export class AgreementRegisterPage implements OnInit {
 
     getCountFromServer(q).then(snapShot => {
       const recordsCount = snapShot.data().count;
+      this.totalRecords = recordsCount;  
+      console.log(this.totalRecords);
       this.recordsCount$.next(recordsCount);
     });
 
-    if (currentPageIndex && this.agtRecords) {
+    if (currentPageIndex && this.currentLoadedRecords) {
       if (isNext) {
-        const docSnap = await getDoc(doc(agtRegCollection, this.agtRecords[this.agtRecords?.length - 1].id));
-        q = query(q,
-          startAfter(docSnap),
-          limit(this.pageSize));
+        const docSnap = await getDoc(doc(agtRegCollection, this.currentLoadedRecords[this.currentLoadedRecords?.length - 1].id));
+        q = query(q, orderBy('dateOfAgreement', 'desc'), startAfter(docSnap), limit(this.pageSize));
       } else {
-        const docSnap = await getDoc(doc(agtRegCollection, this.agtRecords[0].id));
-        q = query(q,
-          endBefore(docSnap),
-          limitToLast(this.pageSize));
+        const docSnap = await getDoc(doc(agtRegCollection, this.currentLoadedRecords[0].id));
+        q = query(q, orderBy('dateOfAgreement', 'desc'), endBefore(docSnap), limitToLast(this.pageSize));
       }
       this.appComponentService.agtRegPageIndex = currentPageIndex;
 
@@ -199,13 +205,12 @@ export class AgreementRegisterPage implements OnInit {
       q = query(q, limit(this.pageSize));
     } else {
       q = query(q, orderBy('dateOfAgreement', 'desc'), limit(this.pageSize));
-
     }
 
     this.agreementRegister$ = collectionData(q, { idField: 'id' }) as Observable<AgreementRegister[]>;
     this.agreementRegister$?.subscribe(agtRegRec => {
-      this.agtRecords = [...agtRegRec];
-      this.appComponentService.currentAgtRegRecords = [...this.agtRecords];
+      this.currentLoadedRecords = [...agtRegRec];
+      this.appComponentService.currentLoadedAgtRecords = [...this.currentLoadedRecords];
       this.isLoading$.next(false);
       this.isDisabled = false;
     });
@@ -230,6 +235,15 @@ export class AgreementRegisterPage implements OnInit {
     }
   }
 
+
+  onIonInfinite(event: Event) {
+    console.log(event);
+    if (this.totalRecords && this.totalRecords >= this.pageIndex * this.pageSize) {
+      this.loadAgtRegisterCollection(this.pageIndex, true);
+      this.pageIndex = this.pageIndex + 1;
+    } 
+    (event as InfiniteScrollCustomEvent).target.complete();
+  }
 
 
   getKeyByValue(value: string): string {

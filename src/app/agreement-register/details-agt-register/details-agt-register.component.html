@@ -108,8 +108,8 @@
 
     </ion-card>
 
-    <ion-list *ngIf="supplAgtCount">
-      <ion-list-header>
+    <ion-list>
+      <ion-list-header *ngIf="$supplAgtCount | async">
         <ion-label>Supplemental Agreement Details</ion-label>
       </ion-list-header>
       <ion-item-sliding *ngFor="let supplAgt of $supplAgtDetails | async">
@@ -131,8 +131,8 @@
 
     <br>
 
-    <ion-list *ngIf="uploadsCount">
-      <ion-list-header>
+    <ion-list>
+      <ion-list-header *ngIf="$uploadsCount | async">
         <ion-label>Uploaded Documents</ion-label>
       </ion-list-header>
 
@@ -156,8 +156,8 @@
 
     <br>
 
-    <ion-list *ngIf="msmtsCount">
-      <ion-list-header>
+    <ion-list>
+      <ion-list-header *ngIf="$msmtsCount | async">
         <ion-label>Measurements</ion-label>
       </ion-list-header>
       <ion-item-sliding *ngFor="let msmt of $measurements | async">
@@ -180,8 +180,8 @@
 
     <br>
 
-    <ion-list *ngIf="billsCount">
-      <ion-list-header>
+    <ion-list>
+      <ion-list-header *ngIf="$billsCount | async">
         <ion-label>Bills</ion-label>
       </ion-list-header>
       <ion-item-sliding *ngFor="let bill of $bills | async">

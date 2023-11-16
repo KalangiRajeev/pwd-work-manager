@@ -32,7 +32,7 @@ export class AppComponentService {
 
   agtRegPageSize?: number;
   agtRegPageIndex?: number;
-  currentAgtRegRecords?: AgreementRegister[];
+  currentLoadedAgtRecords?: AgreementRegister[];
   agtRegRecordsCount?: number;
   selectedAgreementRegister?: AgreementRegister;
 

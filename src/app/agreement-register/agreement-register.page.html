@@ -1,12 +1,13 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button *ngIf="title; else menuButton" icon="chevron-back" defaultHref="/main/agreement-register"></ion-back-button>
+      <ion-back-button *ngIf="title; else menuButton" icon="chevron-back"
+        defaultHref="/main/agreement-register"></ion-back-button>
       <ng-template #menuButton>
         <ion-menu-button></ion-menu-button>
       </ng-template>
     </ion-buttons>
-    
+
     <ion-title>{{title ? title : 'Works Register'}}</ion-title>
   </ion-toolbar>
   <ion-toolbar>
@@ -33,7 +34,7 @@
 
   <mat-tab-group backgroundColor="primary" (selectedTabChange)="matTabSelectedChange($event)" animationDuration="150ms">
     <mat-tab *ngFor="let tabtitle of workStatuses" class="tab-title" [label]="tabtitle">
-      <ion-list *ngIf = "isRenderedInMobile; else renderInLargeScreen">
+      <ion-list *ngIf="isRenderedInMobile; else renderInLargeScreen">
         <ion-item-sliding *ngFor="let agtReg of agreementRegister$ | async; let i = index">
           <ion-item-options side="end">
             <ion-item-option color="danger">
@@ -42,12 +43,12 @@
           </ion-item-options>
 
           <ion-item button detail="true" detail-icon="caret-forward"
-            [routerLink]="['/main/agreement-register/details/', agtReg.id]" 
-            (click)="selectedAgtRegRecord(agtReg)">
+            [routerLink]="['/main/agreement-register/details/', agtReg.id]" (click)="selectedAgtRegRecord(agtReg)">
             <ion-label class="ion-text-wrap">
               <div class="flex-inline">
                 <div>
-                  <p>({{(pageIndex*pageSize)+(i+1)}}) Agt No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement | date: 'dd/MM/yyyy'}}</p>
+                  <p>({{(pageIndex*pageSize)+(i+1)}}) Agt No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement |
+                    date: 'dd/MM/yyyy'}}</p>
                   <p>Agency: {{agtReg.agency.name}}</p>
                 </div>
                 <div class="text-end">
@@ -59,11 +60,15 @@
             </ion-label>
           </ion-item>
         </ion-item-sliding>
+        <!-- <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+          <ion-infinite-scroll-content></ion-infinite-scroll-content>
+        </ion-infinite-scroll> -->
       </ion-list>
 
-      <ng-template #renderInLargeScreen >
+      <ng-template #renderInLargeScreen>
         <div id="htmlData">
-          <table class="table table-hover" [ngClass]="isDarkThemeEnabled ? 'table-dark': 'table-light'">
+          <table class="table table-hover table-borderless"
+            [ngClass]="isDarkThemeEnabled ? 'table-dark': 'table-light'">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -77,10 +82,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let agtReg of agreementRegister$ | async; let i = index" [routerLink]="['/main/agreement-register/details/', agtReg.id]">
+              <tr *ngFor="let agtReg of agreementRegister$ | async; let i = index"
+                [routerLink]="['/main/agreement-register/details/', agtReg.id]">
                 <td>{{(pageIndex*pageSize)+(i+1)}}</td>
                 <td>{{agtReg.nameOfWork}}</td>
-                <td>Agt. No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement | date: 'dd/MM/yyy'}}, concluded @ {{agtReg.office.name}}</td>
+                <td>Agt. No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement | date: 'dd/MM/yyy'}}, concluded @{{agtReg.office.name}}</td>
                 <td>{{agtReg.estimateContractValue | currency:'INR'}}</td>
                 <td>{{agtReg.dueDateOfCompletion | date: 'dd/MM/yyyy'}}</td>
                 <td>{{agtReg.agency.name}}, {{agtReg.agency.address}}</td>
@@ -89,12 +95,16 @@
               </tr>
             </tbody>
           </table>
+          <!-- <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+            <ion-infinite-scroll-content></ion-infinite-scroll-content>
+          </ion-infinite-scroll> -->
         </div>
         <ion-button (click)="exportAsPDF()" *ngIf="agreementRegister$"><mat-icon>picture_as_pdf</mat-icon>Export as PDF</ion-button>
       </ng-template>
     </mat-tab>
   </mat-tab-group>
 </ion-content>
+
 
 <ion-footer>
   <mat-paginator 

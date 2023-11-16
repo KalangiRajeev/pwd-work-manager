@@ -35,16 +35,17 @@ export class DetailsAgtRegisterComponent implements OnInit {
   agtRegId?: string;
 
   $measurements?: Observable<Measurement[] | undefined>;
-  msmtsCount?: number;
   $uploads?: Observable<UploadDoc[] | undefined>;
-  uploadsCount?: number;
-
+  
   $bills?: Observable<Bill[] | undefined>;
-  billsCount?: number;
-
+  
   $supplAgtDetails?: Observable<SupplAgtDetails[] | undefined>;
-  supplAgtCount?: number;
-
+  
+  $supplAgtCount?: Subject<number> = new Subject();
+  $uploadsCount?: Subject<number> = new Subject();
+  $msmtsCount?: Subject<number> = new Subject();
+  $billsCount?: Subject<number> = new Subject();
+  
   constructor(private activitedRoute: ActivatedRoute,
     private navController: NavController,
     private toastController: ToastController,
@@ -78,7 +79,7 @@ export class DetailsAgtRegisterComponent implements OnInit {
         const qs = query(supplAgtsCollection, orderBy('dateOfSupplAgt', 'desc'));
         this.$supplAgtDetails = collectionData(qs, { idField: 'id' }) as Observable<SupplAgtDetails[]>;
         getCountFromServer(qs).then(snapShot => {
-          this.supplAgtCount = snapShot.data().count;
+          this.$supplAgtCount?.next(snapShot.data().count);
           this.isLoading$.next(false);
         });
 
@@ -86,7 +87,7 @@ export class DetailsAgtRegisterComponent implements OnInit {
         const qm = query(msmtsCollection, orderBy('dateOfMeasurement', 'desc'));
         this.$measurements = collectionData(qm, { idField: 'id' }) as Observable<Measurement[]>;
         getCountFromServer(qm).then(snapShot => {
-          this.msmtsCount = snapShot.data().count;
+          this.$msmtsCount?.next(snapShot.data().count);
           this.isLoading$.next(false);
         });
 
@@ -94,7 +95,7 @@ export class DetailsAgtRegisterComponent implements OnInit {
         const qb = query(billsCollection, orderBy('dateOfRecommendation', 'desc'));
         this.$bills = collectionData(qb, { idField: 'id' }) as Observable<Bill[]>;
         getCountFromServer(qb).then(snapShot => {
-          this.billsCount = snapShot.data().count;
+          this.$billsCount?.next(snapShot.data().count);
           this.isLoading$.next(false);
         });
 
@@ -102,7 +103,7 @@ export class DetailsAgtRegisterComponent implements OnInit {
         const qu = query(uploadsCollection, orderBy('uploadedOn', 'desc'));
         this.$uploads = collectionData(qu, { idField: 'id' }) as Observable<UploadDoc[]>;
         getCountFromServer(qu).then(snapShot => {
-          this.uploadsCount = snapShot.data().count;
+          this.$uploadsCount?.next(snapShot.data().count);
           this.isLoading$.next(false);
         });
       })

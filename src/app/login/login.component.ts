@@ -6,6 +6,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { USERS } from '../models/constants';
 import { Role, User } from '../models/user';
 import { AppComponentService } from '../services/app-component-service/app-component.service';
+import { BehaviorSubject } from 'rxjs';
 
 
 
@@ -22,6 +23,7 @@ export class LoginComponent implements OnInit {
   _auth: Auth = inject(Auth);
   _userCredential?: UserCredential;
   _user?: User;
+  $isLoading: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
 
   constructor(private toastController: ToastController,
@@ -35,8 +37,10 @@ export class LoginComponent implements OnInit {
   }
 
   byGoogle() {
+    this.$isLoading.next(true);
     this.appComponentService.signInwithGoogle().then(user => {
       if (user) {
+        this.$isLoading.next(false);
         sessionStorage.setItem('uid', user.uid);
         this.saveUpdateUser(user)
           .then(user => {

@@ -54,7 +54,8 @@ export class FormUploadDocsComponent implements OnInit {
   async uploadDocument(input: HTMLInputElement) {
     if (input.files && input.files?.length > 0 && this.upFormGroup.valid) {
       const file = input.files[0];
-      if (file) {
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+      if (file && file.size < maxSizeInBytes) {
         const storageRef = ref(this.storage, this.agreementRegister?.id + '_' + this.upFormGroup.get('fileName')?.value + '.pdf')
         const uploadTask = uploadBytesResumable(storageRef, file);
         uploadTask.on('state_changed',
@@ -102,17 +103,24 @@ export class FormUploadDocsComponent implements OnInit {
             this.navController.navigateBack(`/main/agreement-register/details/${this.agtRegId}`);
           }
         );
+      } else {
+        const alert = await this.alertController.create({
+          header: 'Alert!',
+          subHeader: 'Upload Form!',
+          message: 'File size exceeded 5MB limit. Please select a smaller file.',
+          buttons: ['OK'],
+        });
+        await alert.present();
       }
     } else {
         const alert = await this.alertController.create({
           header: 'Alert!',
-          subHeader: 'Upload Form',
-          message: 'This is not an valid form!',
+          subHeader: 'Upload Form!',
+          message: 'Pls enter file name',
           buttons: ['OK'],
         });
         await alert.present();
     }
   }
-
 
 }

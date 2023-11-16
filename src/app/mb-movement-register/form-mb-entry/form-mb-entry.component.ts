@@ -118,7 +118,7 @@ export class FormMbEntryComponent implements OnInit {
         setDoc(mbRefDoc, mbRecord)
           .then(agtReg => {
             const toast = this.toastController.create({
-              message: `Saved MB Details!`,
+              message: `Updated MB Details!`,
               duration: 1500,
               position: 'bottom',
             });
@@ -133,23 +133,7 @@ export class FormMbEntryComponent implements OnInit {
           });
       } else {
         const collectionAgreementRegister = collection(this.firestore, MB_RECORDS);
-        addDoc(collectionAgreementRegister, mbRecord)
-          .then(agtReg => {
-            const toast = this.toastController.create({
-              message: `Saved MB Record Details!`,
-              duration: 1500,
-              position: 'bottom',
-            });
-            console.log(agtReg);
-            return toast;
-          })
-          .then(toast => {
-            toast.present();
-            this.navController.navigateBack('/main/mb-movement-register');
-          })
-          .catch(error => {
-            console.log(error);
-          });
+        addDoc(collectionAgreementRegister, mbRecord);
       }
 
       if (this.mbRecordId) {

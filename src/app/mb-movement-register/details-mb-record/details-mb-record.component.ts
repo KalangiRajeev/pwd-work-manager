@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Firestore, collectionData, docSnapshots } from '@angular/fire/firestore';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
-import { collectionGroup, doc, getCountFromServer, query, where } from 'firebase/firestore';
+import { collectionGroup, doc, getCountFromServer, orderBy, query, where } from 'firebase/firestore';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Bill } from 'src/app/models/bill';
 import { BILLS, MB_RECORDS, MEASUREMENTS } from 'src/app/models/constants';
@@ -42,7 +42,7 @@ export class DetailsMbRecordComponent implements OnInit {
         });
 
       const msmtsCollection = collectionGroup(this.firestore, `${MEASUREMENTS}`);
-      const qm = query(msmtsCollection, where('mb.id', '==', this.mbRecordId));
+      const qm = query(msmtsCollection, where('mb.id', '==', this.mbRecordId), orderBy('dateOfMeasurement', 'desc'));
       this.$measurements = collectionData(qm, { idField: 'id' }) as Observable<Measurement[]>;
       getCountFromServer(qm).then(snapShot => {
         const recordsCount = snapShot.data().count;
@@ -51,7 +51,7 @@ export class DetailsMbRecordComponent implements OnInit {
       });
 
       const billsCollection = collectionGroup(this.firestore, `${BILLS}`);
-      const qb = query(billsCollection, where('mb.id', '==', this.mbRecordId));
+      const qb = query(billsCollection, where('mb.id', '==', this.mbRecordId), orderBy('dateOfRecommendation', 'desc'));
       this.$bills = collectionData(qb, { idField: 'id' }) as Observable<Bill[]>;
       getCountFromServer(qb).then(snapShot => {
         const recordsCount = snapShot.data().count;
