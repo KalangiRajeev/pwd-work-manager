@@ -74,7 +74,10 @@
         </ion-item>
         <ion-item lines="none">
           <ion-note slot="start">Work Status</ion-note>
-          <ion-label slot="end"> {{agreementRegister?.workStatus}}</ion-label>
+          <ion-label slot="end"> <mat-chip highlighted
+              [color]="getKeyByValue(agreementRegister?.workStatus!)">{{agreementRegister?.workStatus}}
+            </mat-chip>
+          </ion-label>
         </ion-item>
         <ion-item lines="none">
           <ion-note slot="start">TS Ref</ion-note>
@@ -104,7 +107,8 @@
         Bill</ion-button>
       <ion-button fill="outline" [routerLink]="['/main/agreement-register', agtRegId, 'suppl-agt', 'create']">Add
         Supplemental Agt Details</ion-button>
-      <ion-button fill="outline" [routerLink]="['/main/agreement-register', agtRegId, 'upload-docs']">Upload Documents</ion-button>
+      <ion-button fill="outline" [routerLink]="['/main/agreement-register', agtRegId, 'upload-docs']">Upload
+        Documents</ion-button>
 
     </ion-card>
 

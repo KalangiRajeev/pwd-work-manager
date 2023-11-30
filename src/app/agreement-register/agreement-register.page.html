@@ -1,11 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button
-        *ngIf="title; else menuButton"
-        icon="chevron-back"
-        defaultHref="/main/agreement-register"
-      ></ion-back-button>
+      <ion-back-button *ngIf="title; else menuButton" icon="chevron-back"
+        defaultHref="/main/agreement-register"></ion-back-button>
       <ng-template #menuButton>
         <ion-menu-button></ion-menu-button>
       </ng-template>
@@ -15,10 +12,7 @@
   </ion-toolbar>
   <ion-toolbar>
     <div [formGroup]="searchFormGroup">
-      <ion-searchbar
-        [debounce]="1000"
-        formControlName="searchFormControl"
-      ></ion-searchbar>
+      <ion-searchbar [debounce]="1000" formControlName="searchFormControl"></ion-searchbar>
     </div>
   </ion-toolbar>
 </ion-header>
@@ -36,44 +30,20 @@
     </ion-fab-button>
   </ion-fab>
 
-  <mat-progress-bar
-    mode="indeterminate"
-    color="accent"
-    *ngIf="isLoading$ | async"
-  ></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" color="accent" *ngIf="isLoading$ | async"></mat-progress-bar>
 
-  <mat-tab-group
-    backgroundColor="primary"
-    (selectedTabChange)="matTabSelectedChange($event)"
-    animationDuration="150ms"
-  >
-    <mat-tab
-      *ngFor="let tabtitle of workStatuses"
-      class="tab-title"
-      [label]="tabtitle"
-    >
+  <mat-tab-group backgroundColor="primary" (selectedTabChange)="matTabSelectedChange($event)" animationDuration="150ms">
+    <mat-tab *ngFor="let tabtitle of workStatuses" class="tab-title" [label]="tabtitle">
       <ion-list *ngIf="isRenderedInMobile; else renderInLargeScreen">
-        <ion-item-sliding
-          *ngFor="let agtReg of agreementRegister$ | async; let i = index"
-        >
+        <ion-item-sliding *ngFor="let agtReg of agreementRegister$ | async; let i = index">
           <ion-item-options side="end">
             <ion-item-option color="danger">
-              <ion-icon
-                slot="icon-only"
-                name="trash"
-                button
-                (click)="deleteRecord(agtReg)"
-              ></ion-icon>
+              <ion-icon slot="icon-only" name="trash" button (click)="deleteRecord(agtReg)"></ion-icon>
             </ion-item-option>
           </ion-item-options>
 
-          <ion-item
-            button
-            detail="true"
-            detail-icon="caret-forward"
-            [routerLink]="['/main/agreement-register/details/', agtReg.id]"
-            (click)="selectedAgtRegRecord(agtReg)"
-          >
+          <ion-item button detail="true" detail-icon="caret-forward"
+            [routerLink]="['/main/agreement-register/details/', agtReg.id]" (click)="selectedAgtRegRecord(agtReg)">
             <ion-label class="ion-text-wrap">
               <div class="flex-inline">
                 <div>
@@ -88,33 +58,26 @@
                   <p class="text-end">
                     {{agtReg.estimateContractValue | currency: 'INR'}}
                   </p>
-                  <mat-chip
-                    highlighted
-                    [color]="getKeyByValue(agtReg.workStatus)"
-                    >{{agtReg.workStatus}}</mat-chip
-                  >
+                  <mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}</mat-chip>
                 </div>
               </div>
               <p ngClass="text">{{agtReg.nameOfWork}}</p>
             </ion-label>
           </ion-item>
         </ion-item-sliding>
-        <!-- <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
-          <ion-infinite-scroll-content></ion-infinite-scroll-content>
-        </ion-infinite-scroll> -->
       </ion-list>
 
       <ng-template #renderInLargeScreen>
         <div id="htmlData">
-          <table class="table table-hover table-borderless"
+          <table class="table table-hover table-borderless "
             [ngClass]="isDarkThemeEnabled ? 'table-dark': 'table-light'">
-            <thead>
+            <thead class="thead-dark">
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name of Work</th>
                 <th scope="col">Agreement Ref</th>
                 <th scope="col">Amount</th>
-                <th scope="col">DOC</th>
+                <th scope="col">Dt of Com</th>
                 <th scope="col">Agency</th>
                 <th scope="col">Status</th>
                 <th scope="col">Remarks</th>
@@ -125,52 +88,34 @@
                 [routerLink]="['/main/agreement-register/details/', agtReg.id]">
                 <td>{{(pageIndex*pageSize)+(i+1)}}</td>
                 <td>{{agtReg.nameOfWork}}</td>
-                <td>Agt. No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement | date: 'dd/MM/yyy'}}, concluded @{{agtReg.office.name}}</td>
+                <td>
+                  Agt. No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement
+                  | date: 'dd/MM/yyy'}}, concluded @{{agtReg.office.name}}
+                </td>
                 <td>{{agtReg.estimateContractValue | currency:'INR'}}</td>
                 <td>{{agtReg.dueDateOfCompletion | date: 'dd/MM/yyyy'}}</td>
                 <td>{{agtReg.agency.name}}, {{agtReg.agency.address}}</td>
-                <td><mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}</mat-chip></td>
+                <td>
+                  <mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}
+                  </mat-chip>
+                </td>
                 <td>{{agtReg.remarks}}</td>
               </tr>
             </tbody>
           </table>
         </div>
-
-        <!-- <ag-grid-angular
-          style="width: 100%; height: 100%"
-          [columnDefs]="colDefs"
-          [defaultColDef]="defaultColDef"
-          [rowModelType]="rowModelType"
-          [class]="themeClass"
-          [rowBuffer]="rowBuffer"
-          [rowSelection]="rowSelection"
-          [rowModelType]="rowModelType"
-          [cacheBlockSize]="cacheBlockSize"
-          [cacheOverflowSize]="cacheOverflowSize"
-          [maxConcurrentDatasourceRequests]="maxConcurrentDatasourceRequests"
-          [infiniteInitialRowCount]="infiniteInitialRowCount"
-          [maxBlocksInCache]="maxBlocksInCache"
-          [rowData]="rowData"
-          (gridReady)="onGridReady($event)"
-        ></ag-grid-angular> -->
-
-        <ion-button (click)="exportAsPDF()" *ngIf="agreementRegister$"
-          ><mat-icon>picture_as_pdf</mat-icon>Export as PDF</ion-button
-        >
+        <div class="pull-right">
+          <ion-button (click)="exportAsPDF()" *ngIf="agreementRegister$">
+            <mat-icon>picture_as_pdf</mat-icon>Export as PDF
+          </ion-button>
+        </div>
       </ng-template>
     </mat-tab>
   </mat-tab-group>
 </ion-content>
 
 <ion-footer>
-  <mat-paginator
-    [length]="recordsCount$ | async"
-    [pageSize]="pageSize"
-    [pageSizeOptions]="pageSizeOptions"
-    [pageIndex]="pageIndex"
-    [disabled]="isDisabled"
-    (page)="handlePageEvent($event)"
-    aria-label="Select page"
-  >
+  <mat-paginator [length]="recordsCount$ | async" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+    [pageIndex]="pageIndex" [disabled]="isDisabled" (page)="handlePageEvent($event)" aria-label="Select page">
   </mat-paginator>
 </ion-footer>

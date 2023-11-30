@@ -7,7 +7,7 @@ import { collection, deleteDoc, doc, getCountFromServer, orderBy, query } from '
 import { deleteObject, getDownloadURL, ref } from 'firebase/storage';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Agency } from 'src/app/models/agency';
-import { AgreementRegister } from 'src/app/models/agreement-register';
+import { AgreementRegister, Colors, WorkStatus } from 'src/app/models/agreement-register';
 import { Bill } from 'src/app/models/bill';
 import { AGENCIES, AGREEMENT_REGISTER, BILLS, MEASUREMENTS, OFFICES, STORAGE_UPLOADS, SUPPL_AGT_DETAILS } from 'src/app/models/constants';
 import { Measurement } from 'src/app/models/mesaurement';
@@ -151,6 +151,20 @@ export class DetailsAgtRegisterComponent implements OnInit {
 
   downloadFile(uploadDoc: UploadDoc) {
     window.open(uploadDoc.uploadedUrl, "_blank");
+  }
+
+  getKeyByValue(value: string): string {
+    if (value === WorkStatus.COMPLETED) {
+      return Colors.COMPLETED;
+    } else if (value === WorkStatus.IN_PROGRESS) {
+      return Colors.IN_PROGRESS;
+    } else if (value === WorkStatus.NOT_YET_STARTED) {
+      return Colors.NOT_YET_STARTED;
+    } else if (value === WorkStatus.PENDING) {
+      return Colors.PENDING;
+    } else {
+      return Colors.ALL;
+    }
   }
 
 }
