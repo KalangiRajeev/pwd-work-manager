@@ -30,6 +30,7 @@
     "@capacitor/keyboard": "5.0.6",
     "@capacitor/status-bar": "5.0.6",
     "@ionic/angular": "^7.0.0",
+    "ag-grid-angular": "^31.0.0",
     "firebase": "^10.4.0",
     "firebase-tools": "^12.5.4",
     "ionic-selectable": "^5.0.0",

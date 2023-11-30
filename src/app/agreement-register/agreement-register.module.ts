@@ -15,6 +15,7 @@ import { DetailsAgtRegisterComponent } from './details-agt-register/details-agt-
 import { FormAgtRegisterComponent } from './form-agt-register/form-agt-register.component';
 import { FormSupplAgtComponent } from './form-suppl-agt/form-suppl-agt.component';
 import { FormUploadDocsComponent } from './form-upload-docs/form-upload-docs.component';
+import { AgGridModule } from 'ag-grid-angular';
 
 @NgModule({
   imports: [
@@ -24,6 +25,7 @@ import { FormUploadDocsComponent } from './form-upload-docs/form-upload-docs.com
     AgreementRegisterPageRoutingModule,
     ReactiveFormsModule,
     AngularMaterialModule,
+    AgGridModule
   ],
   declarations: [
     AgreementRegisterPage, 

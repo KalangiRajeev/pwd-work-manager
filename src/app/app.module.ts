@@ -24,6 +24,7 @@ import { UserOfficeComponent } from './users-list/user-office/user-office.compon
 import { AppComponentService } from './services/app-component-service/app-component.service';
 import { MainComponent } from './main/main.component';
 import { HttpClientModule } from '@angular/common/http';
+import { AgGridModule } from 'ag-grid-angular';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import { HttpClientModule } from '@angular/common/http';
     provideStorage(() => getStorage()),
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    AgGridModule,
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, AppComponentService],
   bootstrap: [AppComponent],

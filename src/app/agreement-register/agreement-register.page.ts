@@ -15,6 +15,7 @@ import { AgreementRegister, Colors, WorkStatus } from '../models/agreement-regis
 import { AGREEMENT_REGISTER } from '../models/constants';
 import { Office } from '../models/office';
 import { AppComponentService } from '../services/app-component-service/app-component.service';
+import { ColDef, RowModelType, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 
 
 @Component({
@@ -24,6 +25,50 @@ import { AppComponentService } from '../services/app-component-service/app-compo
   encapsulation: ViewEncapsulation.None
 })
 export class AgreementRegisterPage implements OnInit {
+
+  colDefs: ColDef[] = [
+    {
+      headerName: 'ID',
+      maxWidth: 100,
+      // it is important to have node.id here, so that when the id changes (which happens
+      // when the row is loaded) then the cell is refreshed.
+      valueGetter: 'node.id',
+      cellRenderer: (params: ICellRendererParams) => {
+        if (params.value !== undefined) {
+          return params.value;
+        } else {
+          return '<img src="https://www.ag-grid.com/example-assets/loading.gif">';
+        }
+      },
+    },
+    {headerName: 'Name Of Work', field: 'nameOfWork'},
+    {headerName: 'Admin Sanc Ref', field: 'administrativeSanctionReference'},
+    {headerName: 'Agt No', field: 'agreementNumber'},
+    {headerName: 'Date of Agt', field: 'dateOfAgreement'},
+    {headerName: 'Amount', field: 'estimateContractValue'},
+    {headerName: 'Amount', field: 'estimateContractValue'},
+    {headerName: 'Tender %', field: 'tenderPercentage'},
+    {headerName: 'Date of Compl', field: 'dueDateOfCompletion'},
+    {headerName: 'Agency', field: 'agency'},
+    {headerName: 'Status', field: 'workStatus'},
+    {headerName: 'Remarks', field: 'remarks'},
+  ];
+  defaultColDef: ColDef = {
+    flex: 1,
+    minWidth: 100,
+    sortable: false
+  };
+  themeClass: string = 'ag-theme-quartz';
+  public rowSelection: 'single' = 'single';
+  public rowModelType: RowModelType = 'infinite';
+  public cacheBlockSize = 100;
+  public cacheOverflowSize = 2;
+  public maxConcurrentDatasourceRequests = 1;
+  public infiniteInitialRowCount = 1000;
+  public maxBlocksInCache = 10; 
+  rowData!: AgreementRegister[];
+  rowBuffer: number = 0;
+
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
   @ViewChild('htmlData') htmlData!: ElementRef;
@@ -118,13 +163,10 @@ export class AgreementRegisterPage implements OnInit {
       this.loadAgtRegisterCollection();
     });
 
-    // this.agreementRegister$?.subscribe(agtRecords => {
-    //   const count = this.agtRecords.length + 1;
-    //   agtRecords.forEach(rec => {
-    //     this.agtRecords.push(rec);
-    //   });
-    // });
+  }
 
+  onGridReady(event: GridReadyEvent<AgreementRegister>) {
+    
   }
 
   ionViewWillEnter() {
