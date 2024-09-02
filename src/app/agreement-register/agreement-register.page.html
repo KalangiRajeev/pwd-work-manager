@@ -77,8 +77,10 @@
                 <th scope="col">Name of Work</th>
                 <th scope="col">Agreement Ref</th>
                 <th scope="col">Amount</th>
-                <th scope="col">Dt of Com</th>
                 <th scope="col">Agency</th>
+                <th scope="col">Period of Completion</th>
+                <th scope="col">Date of Completion</th>
+                <th scope="col">Billed Amount</th>
                 <th scope="col">Status</th>
                 <th scope="col">Remarks</th>
               </tr>
@@ -90,11 +92,13 @@
                 <td>{{agtReg.nameOfWork}}</td>
                 <td>
                   Agt. No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement
-                  | date: 'dd/MM/yyy'}}, concluded @{{agtReg.office.name}}
+                  | date: 'dd/MM/yyy'}}, concluded at {{agtReg.office.name}}
                 </td>
                 <td>{{agtReg.estimateContractValue | currency:'INR'}}</td>
-                <td>{{agtReg.dueDateOfCompletion | date: 'dd/MM/yyyy'}}</td>
                 <td>{{agtReg.agency.name}}, {{agtReg.agency.address}}</td>
+                <td>{{monthsBetween(agtReg.dateOfAgreement, agtReg.dueDateOfCompletion) }}</td>
+                <td>{{agtReg.dueDateOfCompletion | date: 'dd/MM/yyyy'}}</td>
+                <td>{{ agtReg.uptoDateBillAmount | currency:'INR' }}</td>
                 <td>
                   <mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}
                   </mat-chip>

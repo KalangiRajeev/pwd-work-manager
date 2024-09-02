@@ -19,7 +19,8 @@ export interface AgreementRegister {
     modifiedOn: number,
     modifiedBy: string,
     extensionOfTime?: number,
-    remarks?: string 
+    remarks?: string,
+    uptoDateBillAmount?: number, 
 }
 
 export enum TenderQuote {

@@ -37,14 +37,14 @@ import {
 import { deleteDoc } from 'firebase/firestore/lite';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, last, Observable, Subject } from 'rxjs';
 import { Agency } from '../models/agency';
 import {
   AgreementRegister,
   Colors,
   WorkStatus,
 } from '../models/agreement-register';
-import { AGREEMENT_REGISTER } from '../models/constants';
+import { AGREEMENT_REGISTER, BILLS } from '../models/constants';
 import { Office } from '../models/office';
 import { AppComponentService } from '../services/app-component-service/app-component.service';
 import {
@@ -59,6 +59,7 @@ import {
   SizeColumnsToContentStrategy,
 } from 'ag-grid-community';
 import { MatTableDataSource } from '@angular/material/table';
+import { Bill } from '../models/bill';
 
 @Component({
   selector: 'app-agreement-register',
@@ -222,7 +223,6 @@ export class AgreementRegisterPage implements OnInit {
     getCountFromServer(q).then((snapShot) => {
       const recordsCount = snapShot.data().count;
       this.totalRecords = recordsCount;
-      console.log(this.totalRecords);
       this.recordsCount$.next(recordsCount);
     });
 
@@ -261,6 +261,7 @@ export class AgreementRegisterPage implements OnInit {
     this.agreementRegister$ = collectionData(q, {
       idField: 'id',
     }) as Observable<AgreementRegister[]>;
+
     this.agreementRegister$?.subscribe((agtRegRec) => {
       this.currentLoadedRecords = [...agtRegRec];
       this.appComponentService.currentLoadedAgtRecords = [
@@ -274,7 +275,6 @@ export class AgreementRegisterPage implements OnInit {
 
   handlePageEvent(event: PageEvent) {
     this.appComponentService.agtRegPageSize = event.pageSize;
-    console.log(this.appComponentService.agtRegPageIndex);
 
     if (this.pageSize !== event.pageSize) {
       this.pageIndex = 0;
@@ -360,6 +360,51 @@ export class AgreementRegisterPage implements OnInit {
 
   selectedAgtRegRecord(agtReg: AgreementRegister) {
     this.appComponentService.selectedAgreementRegister = agtReg;
+  }
+
+  monthsBetween(date1: number, date2: number): any {
+    let d1 = new Date(date1);
+    let d2 = new Date(date2);
+
+    if (d2 < d1) {
+      [d1, d2] = [d2, d1];
+    }
+    // Calculate the number of months
+    let months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth();
+    months += d2.getMonth();
+
+    // Calculate the difference in days
+    const daysDifference = Math.floor(
+      (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    const daysInMonth = new Date(
+      d1.getFullYear(),
+      d1.getMonth() + 1,
+      0
+    ).getDate();
+
+    // If the difference is less than a month, return days
+    if (daysDifference < daysInMonth) {
+      return `${daysDifference} Days`;
+    } else {
+      return `${months} Months`;
+    }
+  }
+
+  getUpToDateBillAmount(agtId?: string): number {
+    console.log('getUpToDateBillAmount');
+    let billAmount = 0;
+    // const billsCollection = collection(
+    //   this.firestore,
+    //   `${AGREEMENT_REGISTER}/${agtId}/${BILLS}`
+    // );
+    // const qb = query(billsCollection, orderBy('dateOfRecommendation', 'asc'));
+    // (collectionData(qb, { idField: 'id' }).pipe(last()) as Observable<Bill>).subscribe(bill => {
+    //   console.log(bill);
+    //   billAmount = bill.uptoDateBillAmount;
+    // });
+    return billAmount;
   }
 
   exportAsPDF() {
