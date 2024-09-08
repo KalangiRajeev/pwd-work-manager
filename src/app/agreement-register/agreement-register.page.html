@@ -76,17 +76,17 @@
                 <th scope="col">#</th>
                 <th scope="col">Name of Work</th>
                 <th scope="col">Agreement Ref</th>
-                <th scope="col">Amount</th>
                 <th scope="col">Agency</th>
+                <th scope="col">Amount</th>
                 <th scope="col">Period of Completion</th>
                 <th scope="col">Date of Completion</th>
-                <th scope="col">Billed Amount</th>
+                <th scope="col">Amount of Bills Paid</th>
                 <th scope="col">Status</th>
                 <th scope="col">Remarks</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let agtReg of agreementRegister$ | async; let i = index"
+              <tr *ngFor="let agtReg of agreementRegister$ | async; let i = index" (click)="selectedAgtRegRecord(agtReg)"
                 [routerLink]="['/main/agreement-register/details/', agtReg.id]">
                 <td>{{(pageIndex*pageSize)+(i+1)}}</td>
                 <td>{{agtReg.nameOfWork}}</td>
@@ -94,8 +94,8 @@
                   Agt. No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement
                   | date: 'dd/MM/yyy'}}, concluded at {{agtReg.office.name}}
                 </td>
-                <td>{{agtReg.estimateContractValue | currency:'INR'}}</td>
                 <td>{{agtReg.agency.name}}, {{agtReg.agency.address}}</td>
+                <td>{{agtReg.estimateContractValue | currency:'INR'}}</td>
                 <td>{{monthsBetween(agtReg.dateOfAgreement, agtReg.dueDateOfCompletion) }}</td>
                 <td>{{agtReg.dueDateOfCompletion | date: 'dd/MM/yyyy'}}</td>
                 <td>{{ agtReg.uptoDateBillAmount | currency:'INR' }}</td>

@@ -30,6 +30,7 @@ import {
 } from 'src/app/models/constants';
 import { MbRecord } from 'src/app/models/mbrecord';
 import { Office } from 'src/app/models/office';
+import { AppComponentService } from 'src/app/services/app-component-service/app-component.service';
 
 @Component({
   selector: 'app-add-bill',
@@ -41,6 +42,7 @@ export class AddBillComponent implements OnInit {
 
   isEditBill: boolean = false;
   agtRegId?: string;
+  agreementRegister?: AgreementRegister;
   officeId?: string;
   billId?: string;
   agtNo?: string;
@@ -77,7 +79,8 @@ export class AddBillComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private toastController: ToastController,
     private navController: NavController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private appComponentService: AppComponentService
   ) {
     this.activatedRoute.params.subscribe((params) => {
       this.agtRegId = params['agtRegId'];
@@ -261,11 +264,10 @@ export class AddBillComponent implements OnInit {
 
   private updateBillAmountInAgreementRegister() {
     const agtRefDoc = doc(this.firestore, `${AGREEMENT_REGISTER}/${this.agtRegId}`);
-    docSnapshots(agtRefDoc).subscribe((agtSnap) => {
-      let agreementRegister = agtSnap.data() as AgreementRegister;
-      agreementRegister.id = agtSnap.id;
+    if (this.appComponentService.selectedAgreementRegister) {
+      let agreementRegister: AgreementRegister = this.appComponentService.selectedAgreementRegister;
       agreementRegister.uptoDateBillAmount = this.billFormGroup.get('uptoDateBillAmount')?.value;
       setDoc(agtRefDoc, agreementRegister);
-    });
+    } 
   }
 }
