@@ -198,7 +198,8 @@ export class FormAgtRegisterComponent implements OnInit {
         workStatus: this.agreementRegisterForm.get('workStatus')?.value,
         remarks: this.agreementRegisterForm.get('remarks')?.value,
         modifiedOn: new Date().getTime(),
-        modifiedBy: this.appComponentService.loggedInUser?.email ?? '-'
+        modifiedBy: this.appComponentService.loggedInUser?.email ?? '-',
+        uptoDateBillAmount: this.agreementRegister?.uptoDateBillAmount ?? 0,
       }
 
       console.log(agreementRegister);

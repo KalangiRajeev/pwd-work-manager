@@ -116,30 +116,34 @@ export class FormMbEntryComponent implements OnInit {
         const mbRefDoc = doc(this.firestore, `${MB_RECORDS}/${this.mbRecordId}`);
 
         setDoc(mbRefDoc, mbRecord)
-          .then(agtReg => {
+          .then(mbDoc => {
             const toast = this.toastController.create({
-              message: `Updated MB Details!`,
+              message: `Updated MB.No${mbRecord.mbNumber} Details!`,
               duration: 1500,
               position: 'bottom',
             });
-            console.log(agtReg);
             return toast;
           })
-          .then(toast => {
-            toast.present();
-          })
-          .catch(error => {
-            console.log(error);
-          });
+          .then(toast => toast.present())
+          .catch(error => console.log(error));
       } else {
         const collectionAgreementRegister = collection(this.firestore, MB_RECORDS);
-        addDoc(collectionAgreementRegister, mbRecord);
+        addDoc(collectionAgreementRegister, mbRecord)
+        .then(mbDoc => {
+          const toast = this.toastController.create({
+            message: `MB.No${mbRecord.mbNumber} Registered!`,
+            duration: 1500,
+            position: 'bottom',
+          });
+          return toast;
+        })
+        .then(toast => toast.present())
+        .catch(error => console.log(error));
+        this.mbFormGroup.reset();
       }
 
       if (this.mbRecordId) {
         this.navController.navigateBack(`/main/mb-movement-register/details/${this.mbRecordId}`)
-      } else {
-        this.navController.navigateBack('/main/mb-movement-register');
       }
 
     } else {
