@@ -76,11 +76,13 @@
                 <th scope="col">#</th>
                 <th scope="col">Name of Work</th>
                 <th scope="col">Agreement Ref</th>
+                <th scope="col">TS/TA Ref</th>
                 <th scope="col">Agency</th>
                 <th scope="col">Amount</th>
                 <th scope="col">Period of Completion</th>
                 <th scope="col">Date of Completion</th>
-                <th scope="col">Amount of Bills Paid</th>
+                <th scope="col">EOT</th>
+                <th scope="col">Upto Date Bill</th>
                 <th scope="col">Status</th>
                 <th scope="col">Remarks</th>
               </tr>
@@ -91,13 +93,14 @@
                 <td>{{(pageIndex*pageSize)+(i+1)}}</td>
                 <td>{{agtReg.nameOfWork}}</td>
                 <td>
-                  Agt. No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement
-                  | date: 'dd/MM/yyy'}}, concluded at {{agtReg.office.name}}
+                  Agt. No.{{agtReg.agreementNumber}} Dt:{{agtReg.dateOfAgreement | date: 'dd/MM/yyy'}} @{{agtReg.tenderPercentage | number}}% {{agtReg.tenderQuote}}, concluded at {{agtReg.office.name}}
                 </td>
+                <td>{{agtReg.technicalSanctionReference}}</td>
                 <td>{{agtReg.agency.name}}, {{agtReg.agency.address}}</td>
                 <td>{{agtReg.estimateContractValue | currency:'INR'}}</td>
                 <td>{{monthsBetween(agtReg.dateOfAgreement, agtReg.dueDateOfCompletion) }}</td>
                 <td>{{agtReg.dueDateOfCompletion | date: 'dd/MM/yyyy'}}</td>
+                <td>{{agtReg.extensionOfTime ? (agtReg.extensionOfTime | date: 'dd/MM/yyyy') : 'NA' }}</td>
                 <td>{{ agtReg.uptoDateBillAmount | currency:'INR' }}</td>
                 <td>
                   <mat-chip highlighted [color]="getKeyByValue(agtReg.workStatus)">{{agtReg.workStatus}}
