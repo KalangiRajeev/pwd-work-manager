@@ -14,7 +14,7 @@ export class MainComponent  implements OnInit {
 
   public appPages = [
     { title: 'Works Register', url: `/main/folder/office/${sessionStorage.getItem('uid')}`, icon: 'home' },
-    // { title: 'MB Register', url: `/main/mb-movement-register/${sessionStorage.getItem('uid')}`, icon: 'book' },
+    // { title: 'Estimate Register', url: `/main/estimate-register/${sessionStorage.getItem('uid')}`, icon: 'paper' },
     { title: 'MB Register', url: `/main/folder/mb-register/${sessionStorage.getItem('uid')}`, icon: 'book' }
   ];
   

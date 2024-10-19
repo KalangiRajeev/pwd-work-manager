@@ -39,6 +39,10 @@ const routes: Routes = [
         loadChildren: () => import('./bill-register/bill-register.module').then(m => m.BillRegisterPageModule),
       },
       {
+        path: 'estimate-register',
+        loadChildren: () => import('./estimate-register/estimate-register.module').then(m =>m.EstimateRegisterPageModule),
+      },
+      {
         path: 'mb-register',
         loadChildren: () => import('./pwd-offices/pwd-offices.module').then(m => m.PwdOfficesPageModule),
       },
@@ -63,6 +67,10 @@ const routes: Routes = [
         component: UserOfficeComponent,
       },
     ]
+  },
+  {
+    path: 'estimate-register',
+    loadChildren: () => import('./estimate-register/estimate-register.module').then( m => m.EstimateRegisterPageModule)
   }
 ];
 

@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button *ngIf="title; else menuButton" icon="chevron-back"
+      <ion-back-button *ngIf="officeId || agencyId; else menuButton" icon="chevron-back"
         defaultHref="/main/agreement-register"></ion-back-button>
       <ng-template #menuButton>
         <ion-menu-button></ion-menu-button>
